@@ -1328,7 +1328,6 @@ return new String(content);
 
     }
 	catch (e) {
-toast(e);
         return "0 ; 0 ; Error";
     }
 }
