@@ -1,4 +1,4 @@
-/*######### release 1.5 ; dev021 ######
+/*######### release 1.5 ; dev022 ######
 ######### INVENTORY TWEAKS PE #########
 ############# by Sin0psysS ############
 #####################################*/
@@ -9,7 +9,7 @@
 
 
 //gui variables
-var ctx = com.mojang.minecraftpe.MainActivity.currentMainActivity.get(),GUI,GUIb,GUIop,GUIc,GUIup;
+var ctx = com.mojang.minecraftpe.MainActivity.currentMainActivity.get(),GUI,GUIb,GUIop,GUIc,GUIup,GUInt;
 var dp = ctx.getResources().getDisplayMetrics().density,mX,mY,buttonX = 5*dp,buttonY = 25*dp,pressed=false;
 
 
@@ -83,14 +83,26 @@ else {
 	destacking = main[2][0];
 	buttonX = parseFloat(main[3]);
 	buttonY = parseFloat(main[4]);
+	if(main[5]==undefined){
+		wifi_only=false;
+		networkPreferencesGUI();
+	}
+	else {
+		wifi_only = Boolean.valueOf(main[5]);
+	}
 }
 
 
 //auto update
-var versionInfo=loadTxtFromUrl("https://raw.githubusercontent.com/Sin0psysS/ModPE/master/it_versionInfo").split(" ; ");
-if(Number(versionInfo[1])>21) {
-	var newCode=loadTxtFromUrl("https://raw.githubusercontent.com/Sin0psysS/ModPE/master/it_lastVersion");
-	updateTo(versionInfo);
+var activeNetwork = ctx.getSystemService(ctx.CONNECTIVITY_SERVICE).getActiveNetworkInfo();
+if(activeNetwork!=null&&activeNetwork.isConnectedOrConnecting()) {
+	if(wifi_only&&wifi_only!=0&&activeNetwork.getType()==1||wifi_only!=0&&!wifi_only) {
+		var versionInfo=loadTxtFromUrl("https://raw.githubusercontent.com/Sin0psysS/ModPE/master/it_versionInfo").split(" ; ");
+		if(Number(versionInfo[1])>22) {
+			var newCode=loadTxtFromUrl("https://raw.githubusercontent.com/Sin0psysS/ModPE/master/it_lastVersion");
+			updateTo(versionInfo);
+		}
+	}
 }
 
 
@@ -99,6 +111,7 @@ if(Number(versionInfo[1])>21) {
 
 function newLevel() {
 deleteGUIup();
+deleteGUInt();
 	//icon
 	buttons()
 }
@@ -152,7 +165,11 @@ function attackHook() {
 function procCmd(cmd) {
 	var c = cmd.split(" ");
 	if(c[0]=="help") {
-		helpMsg()
+		helpMsg(c[1])
+	}
+	if(c[0]=="delete"&&c[1]=="data"){
+		if(dataFile.exists())
+			dataFile.delete();
 	}
 	if(c[0]=="hidegui") {
 		deleteGUIb();
@@ -178,13 +195,18 @@ function procCmd(cmd) {
 			sort();
 		}
 		else {
-			helpMsg()
+			helpMsg(c[1])
 		}
 	}
 }
 
-function helpMsg() {
-	clientMessage("§l§8[Inventory Tweaks] §r§o§7 A little help there ?\n§7> §fUse the§o GUI§r, or these commands :\n§7> §f§o/showgui §7/§f /hidegui§7 to hide or display the button\n§7> §f§o/sort inv§7 to sort your inventory ;\n§7> §f§o/sort chest§7 (then hit a regular chest)§7 to sort a small chest ;\n§7> §f§o/sort large chest§7 (then hit a large chest)§7 to sort a large chest.\n§7> The mod will place the right tool in your hand when you start breaking a block (if you have it), and even craft it for you if you feel lazy.\n\n§7§oContact §8@Sin0psysS§7 to report any bug or problem encountered!\n§lEnjoy the mod!");
+function helpMsg(page) {
+	if(page=="2){
+		clientMessage("§l§8[Inventory Tweaks] §r§o§7 Help page 2 of 2\n§7> §f§o/sort inv§7 to sort your inventory ;\n§7> §f§o/sort chest§7 (then hit a regular chest)§7 to sort a small chest ;\n§7> §f§o/sort large chest§7 (then hit a large chest)§7 to sort a large chest.\n§7> The mod will place the right tool in your hand when you start breaking a block (if you have it), and even craft it for you if you feel lazy.\n\n§7§oContact §8@Sin0psysS§7 to report any bug or problem encountered!\n§lEnjoy the mod!")
+	}
+	else {
+		clientMessage("§l§8[Inventory Tweaks] §r§o§7 A little help there ? - page 1 of 2\n§7> §fUse the§o GUI§r, or these commands :\n§7> §f§o/delete data to reset preferences\n§7> §f§o/showgui §7/§f /hidegui§7 to hide or display the button);
+	}
 }
 
 
@@ -859,6 +881,23 @@ function deleteGUIup() {
 	});
 }
 
+function deleteGUInt() {
+	ctx.runOnUiThread(new java.lang.Runnable() {  
+		run: function() {
+			try {
+				if(GUInt != null) {  
+					GUInt.dismiss();
+					GUInt=null
+				}
+			}
+			catch(e) {
+				toast(e);
+			}
+		}  
+	});
+}
+
+
 //minecraft-like button
 function button(text) {
 	var mcButton = new android.widget.Button(ctx); mcButton.setText(text);
@@ -1308,6 +1347,79 @@ function rewriteMod() {
 	net.zhuoweizhang.mcpelauncher.ScriptManager.setEnabled(ff, true);
 }
 
+
+//Network settings
+function networkPreferencesGUI() {
+	ctx.runOnUiThread(new java.lang.Runnable( {
+		run: function() {
+			try {
+				var layout = new android.widget.LinearLayout(ctx);
+				layout.setOrientation(1);
+				var menuScroll = new android.widget.ScrollView(ctx);
+				menuScroll.addView(layout);
+				var layout1 = new android.widget.LinearLayout(ctx);
+				layout1.setOrientation(1);
+				layout1.addView(menuScroll);
+
+				var txt_0 = new android.widget.TextView(ctx);
+				txt_0.setGravity(android.view.Gravity.CENTER);
+				txt_0.setText("\nInventory tweaks PE     \n");
+				txt_0.setTextColor(android.graphics.Color.YELLOW);
+				txt_0.setTypeface(font);
+				txt_0.setTextSize(17);
+				txt_0.setLineSpacing(0, 1.15);
+				layout.addView(txt_0);
+					
+				var txt_1 = new android.widget.TextView(ctx);
+				txt_1.setGravity(android.view.Gravity.CENTER);
+				txt_1.setText("Network preferences for the auto-update :\nOnly check when connected to a Wifi network?");
+				txt_1.setTextColor(android.graphics.Color.WHITE);
+				txt_1.setTypeface(font);
+				txt_1.setTextSize(14);
+				txt_1.setLineSpacing(0, 1.15);
+				layout.addView(txt_1);
+				
+				var yesButton=button("Yes, please");
+				yesButton.setOnClickListener(new android.view.View.OnClickListener( {
+					onClick: function(viewarg) {
+						wifi_only=true;
+						toast("Settings changed! Type '/delete data' in-game to reset them.");
+						GUInt.dismiss();
+						GUInt=null;
+					}
+				}));
+				layout.addView(yesButton);
+				
+				var noButton=button("Nope, both are all right");
+				noButton.setOnClickListener(new android.view.View.OnClickListener( {
+					onClick: function(viewarg) {
+						toast("Settings saved! Type '/delete data' in-game to reset them.");
+						GUInt.dismiss();
+						GUInt=null;
+					}
+				}));
+				layout.addView(noButton);
+
+				var txt_2 = new android.widget.TextView(ctx);
+				txt_2.setGravity(android.view.Gravity.CENTER);
+				txt_2.setText("\n(Data size : < 4ko for normal check, < 300ko when downloading an update)");
+				txt_2.setTextColor(android.graphics.Color.WHITE);
+				txt_2.setTypeface(font);
+				txt_2.setTextSize(14);
+				txt_2.setLineSpacing(0, 1.15);
+				layout.addView(txt_2);
+				
+				
+				GUInt = new android.widget.PopupWindow(layout1, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
+				GUInt.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.BLACK));
+				GUInt.showAtLocation(ctx.getWindow().getDecorView(), android.view.Gravity.CENTER | android.view.Gravity.CENTER, 0, 0);
+			}
+			catch(err) {
+				toast("Network menu error " + err);
+			}
+		}
+	}));
+}
 
 //Tools
 function toast(msg) {
