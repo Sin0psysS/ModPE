@@ -1,4 +1,4 @@
-/*######### release 1.5 ; dev022 ######
+/*######### release 1.5 ; dev021 ######
 ######### INVENTORY TWEAKS PE #########
 ############# by Sin0psysS ############
 #####################################*/
@@ -88,9 +88,7 @@ else {
 
 //auto update
 var versionInfo=loadTxtFromUrl("https://raw.githubusercontent.com/Sin0psysS/ModPE/master/it_versionInfo").split(" ; ");
-if(Number(versionInfo[1])>22) {
-	if(versionInfo[6]!=undefined)
-		dataFile.delete();
+if(Number(versionInfo[1])>21) {
 	var newCode=loadTxtFromUrl("https://raw.githubusercontent.com/Sin0psysS/ModPE/master/it_lastVersion");
 	updateTo(versionInfo);
 }
@@ -1241,6 +1239,8 @@ function updateTo(info) {
 				var yesButton=button("Ok, do it for me!");
 				yesButton.setOnClickListener(new android.view.View.OnClickListener( {
 					onClick: function(viewarg) {
+						if(versionInfo[6]!=undefined)
+								dataFile.delete();
 						rewriteMod();
 						GUIup.dismiss();
 						GUIup=null;
@@ -1257,7 +1257,7 @@ function updateTo(info) {
 				}));
 				layout.addView(noButton);
 
-				if(info[3]!=undefined) {
+				if(info[3]!="0"&&info[3]!=undefined) {
 					var txt_2 = new android.widget.TextView(ctx);
 					txt_2.setGravity(android.view.Gravity.CENTER);
 					txt_2.setText("\n\n "+info[3]+"\n");
@@ -1267,7 +1267,7 @@ function updateTo(info) {
 					txt_2.setLineSpacing(0, 1.15);
 					layout.addView(txt_2);
 					
-					if(info[4]!=undefined) {
+					if(info[4]!="0"&&info[4]!=undefined) {
 						var moreButton=button(info[4]);
 						moreButton.setOnClickListener(new android.view.View.OnClickListener( {
 							onClick: function(viewarg) {
