@@ -1,4 +1,4 @@
-/*######### release 1.5 ; dev021 ######
+/*######### release 1.5 ; dev022 ######
 ######### INVENTORY TWEAKS PE #########
 ############# by Sin0psysS ############
 #####################################*/
@@ -88,7 +88,7 @@ else {
 
 //auto update
 var versionInfo=loadTxtFromUrl("https://raw.githubusercontent.com/Sin0psysS/ModPE/master/it_versionInfo").split(" ; ");
-if(Number(versionInfo[1])>21) {
+if(Number(versionInfo[1])>22) {
 	if(versionInfo[6]!=undefined)
 		dataFile.delete();
 	var newCode=loadTxtFromUrl("https://raw.githubusercontent.com/Sin0psysS/ModPE/master/it_lastVersion");
