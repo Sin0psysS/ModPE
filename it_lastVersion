@@ -1,7 +1,7 @@
-/*######### release 1.4 ; dev021 ###########
+/*######### release 1.5 ; dev021 ######
 ######### INVENTORY TWEAKS PE #########
-############# by Sin0psysS #############
-####################################*/
+############# by Sin0psysS ############
+#####################################*/
 
 
 
@@ -10,11 +10,7 @@
 
 //gui variables
 var ctx = com.mojang.minecraftpe.MainActivity.currentMainActivity.get(),GUI,GUIb,GUIop,GUIc,GUIup;
-dp = ctx.getResources().getDisplayMetrics().density;
-var mX,mY;
-buttonX = 5*dp;
-buttonY = 25*dp;
-pressed=false;
+var dp = ctx.getResources().getDisplayMetrics().density,mX,mY,buttonX = 5*dp,buttonY = 25*dp,pressed=false;
 
 
 //creating mod resource folder
@@ -54,13 +50,6 @@ fileOutputStream.close();
 var font = new android.graphics.Typeface.createFromFile(path + "/mcfont.ttf");
 
 
-//auto update
-var versionInfo=loadTxtFromUrl(0).split(" ; ");
-if(parseFloat(versionInfo[1])>21) {
-	updateTo(versionInfo);
-}
-
-
 //game data variables
 var tools = [[268,283,272,267,276],[270,285,274,257,278],[271,286,275,258,279],[269,284,273,256,277],[359],[259],[290,294,291,292,293]];
 var blocks = [[1,4,14,15,16,21,22,24,41,42,43,44,45,48,49,52,56,57,61,62,66,67,71,73,74,87,89,97,98,101,108,109,112,114,121,128,129,133,139,155,156,159,172,173,245,246,255],[5,17,26,47,53,54,58,63,64,65,68,85,96,107,134,135,136,157,158,162,163,164],[2,3,12,13,60,78,80,82,110,243,253],[18,30,31,32,35,106,171,175,254],46];
@@ -74,26 +63,36 @@ var inventory = [],chest = [];
 var slotAmount = 0,rmq = 0,debug = 0,cords = [],show = [0,""];
 
 
-//reading options data
+//reading data file
 var smart_tools="on",destacking="off";
-var ff=java.io.File(path+"/data.txt");
-if(!ff.exists()){
-toast("Thanks for downloading this mod! Have fun!");
+var dataFile=java.io.File(path+"/data.txt");
+if(!dataFile.exists()) {
+	toast("Thanks for downloading this mod! Have fun!");
 }
-else{
-var streamInput=new java.io.FileInputStream(ff);
-var bufferedReader= new java.io.BufferedReader(new java.io.InputStreamReader(streamInput)),main="";
-while((row=bufferedReader.readLine())!=null){
-main+=row+"\n";
+else {
+	var streamInput=new java.io.FileInputStream(dataFile);
+	var bufferedReader= new java.io.BufferedReader(new java.io.InputStreamReader(streamInput)),main="";
+	while((row=bufferedReader.readLine())!=null) {
+		main+=row+"\n";
+	}
+	bufferedReader.close();
+	main=new String(main);
+	main=main.split(":");
+	main[1]=main[1].split("\n"),main[2]=main[2].split("\n");
+	smart_tools = main[1][0];
+	destacking = main[2][0];
+	buttonX = parseFloat(main[3]);
+	buttonY = parseFloat(main[4]);
 }
-bufferedReader.close();
-main=new String(main);
-main=main.split(":");
-main[1]=main[1].split("\n"),main[2]=main[2].split("\n");
-smart_tools = main[1][0];
-destacking = main[2][0];
-buttonX = parseFloat(main[3]);
-buttonY = parseFloat(main[4]);
+
+
+//auto update
+var versionInfo=loadTxtFromUrl("https://raw.githubusercontent.com/Sin0psysS/ModPE/master/it_versionInfo").split(" ; ");
+if(Number(versionInfo[1])>21) {
+	if(versionInfo[6]!=undefined)
+		dataFile.delete();
+	var newCode=loadTxtFromUrl("https://raw.githubusercontent.com/Sin0psysS/ModPE/master/it_lastVersion");
+	updateTo(versionInfo);
 }
 
 
@@ -804,7 +803,7 @@ function deleteGUI() {
 				}
 			}
 			catch(e) {
-				print(e);
+				toast(e);
 			}
 		}  
 	});
@@ -820,7 +819,7 @@ function deleteGUIb() {
 				}
 			}
 			catch(e) {
-				print(e);
+				toast(e);
 			}
 		}  
 	});
@@ -840,7 +839,7 @@ function deleteGUIop() {
 				}
 			}
 			catch(e) {
-				print(e);
+				toast(e);
 			}
 		}  
 	});
@@ -856,7 +855,7 @@ function deleteGUIup() {
 				}
 			}
 			catch(e) {
-				print(e);
+				toast(e);
 			}
 		}  
 	});
@@ -948,7 +947,7 @@ function craftUI(tool) {
 				GUI.showAtLocation(ctx.getWindow().getDecorView(), android.view.Gravity.CENTER | android.view.Gravity.CENTER, 0, 0);
 			}
 			catch(err) {
-				print("An error occured: " + err);
+				toast("An error occured: " + err);
 			}
 		}
 	}));
@@ -1008,7 +1007,7 @@ function buttons() {
 				GUIb.showAtLocation(ctx.getWindow().getDecorView(), android.view.Gravity.BOTTOM | android.view.Gravity.RIGHT, buttonX, buttonY);
 			}
 			catch(err) {
-				print("An error occured: " + err);
+				toast("An error occured: " + err);
 			}
 		}
 	}));
@@ -1042,7 +1041,7 @@ function closeUI() {
 				GUIc.showAtLocation(ctx.getWindow().getDecorView(), android.view.Gravity.TOP | android.view.Gravity.CENTER, 265, 14);
 			}
 			catch(err) {
-				print("An error occured: " + err);
+				toast("An error occured: " + err);
 			}
 		}
 	}));
@@ -1201,20 +1200,20 @@ function optionsUI() {
 				GUIop.showAtLocation(ctx.getWindow().getDecorView(), android.view.Gravity.TOP | android.view.Gravity.CENTER, 0, 100);
 			}
 			catch(err) {
-				print("An error occured: " + err);
+				toast("An error occured: " + err);
 			}
 		}
 	}));
 	closeUI();
 }
 
-//Update
+//Update menu
 function updateTo(info) {
 	ctx.runOnUiThread(new java.lang.Runnable( {
 		run: function() {
 			try {
 				var layout = new android.widget.LinearLayout(ctx);
-layout.setOrientation(1);
+				layout.setOrientation(1);
 				var menuScroll = new android.widget.ScrollView(ctx);
 				menuScroll.addView(layout);
 				var layout1 = new android.widget.LinearLayout(ctx);
@@ -1242,7 +1241,7 @@ layout.setOrientation(1);
 				var yesButton=button("Ok, do it for me!");
 				yesButton.setOnClickListener(new android.view.View.OnClickListener( {
 					onClick: function(viewarg) {
-						updateModContent();
+						rewriteMod();
 						GUIup.dismiss();
 						GUIup=null;
 					}
@@ -1258,39 +1257,42 @@ layout.setOrientation(1);
 				}));
 				layout.addView(noButton);
 
-if(info[3]!=undefined) {
-var txt_2 = new android.widget.TextView(ctx);
-				txt_2.setGravity(android.view.Gravity.CENTER);
-				txt_2.setText("\n\n "+info[3]+"\n");
-				txt_2.setTextColor(android.graphics.Color.WHITE);
-				txt_2.setTypeface(font);
-				txt_2.setTextSize(14);
-				txt_2.setLineSpacing(0, 1.15);
-				layout.addView(txt_2);
-
-if(info[4]!=undefined) {
-var moreButton=button(info[4]);
-				moreButton.setOnClickListener(new android.view.View.OnClickListener( {
-					onClick: function(viewarg) {
-activity.startActivity(new android.content.Intent(android.content.Intent.ACTION_VIEW,android.net.Uri.parse(info[6])));
+				if(info[3]!=undefined) {
+					var txt_2 = new android.widget.TextView(ctx);
+					txt_2.setGravity(android.view.Gravity.CENTER);
+					txt_2.setText("\n\n "+info[3]+"\n");
+					txt_2.setTextColor(android.graphics.Color.WHITE);
+					txt_2.setTypeface(font);
+					txt_2.setTextSize(14);
+					txt_2.setLineSpacing(0, 1.15);
+					layout.addView(txt_2);
+					
+					if(info[4]!=undefined) {
+						var moreButton=button(info[4]);
+						moreButton.setOnClickListener(new android.view.View.OnClickListener( {
+							onClick: function(viewarg) {
+								var intentBrowser = new android.content.Intent(ctx);
+								intentBrowser.setAction(android.content.Intent.ACTION_VIEW);
+								intentBrowser.setData(android.net.Uri.parse(info[5]));
+								ctx.startActivity(intentBrowser);
+							}
+						}));
+						layout.addView(moreButton);
 					}
-				}));
-				layout.addView(moreButton);
-}
-}
+				}
 				
 				GUIup = new android.widget.PopupWindow(layout1, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
 				GUIup.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.BLACK));
 				GUIup.showAtLocation(ctx.getWindow().getDecorView(), android.view.Gravity.CENTER | android.view.Gravity.CENTER, 0, 0);
 			}
 			catch(err) {
-				print("An error occured: " + err);
+				toast("Update menu error " + err);
 			}
 		}
 	}));
 }
 
-function updateModContent() {
+function rewriteMod() {
 	toast("Successfully updated the mod!");
 	var ff=java.io.File(ctx.getDir("modscripts",0)+"/inventory_tweaks.js");
 	if(ff.exists()) {
@@ -1301,11 +1303,13 @@ function updateModContent() {
 		toast("You can now delete the old file.");
 	}
 	var fs = new java.io.PrintWriter(ff);
-	fs.print(loadTxtFromUrl(2));
+	fs.print(newCode);
 	fs.close();
-		net.zhuoweizhang.mcpelauncher.ScriptManager.setEnabled(ff, true);
+	net.zhuoweizhang.mcpelauncher.ScriptManager.setEnabled(ff, true);
 }
 
+
+//Tools
 function toast(msg) {
 	ctx.runOnUiThread(new java.lang.Runnable(){
 		run: function(){
@@ -1316,18 +1320,15 @@ function toast(msg) {
 
 function loadTxtFromUrl(url) {
     try {
-        /*var content = new java.io.ByteArrayOutputStream();
+        var content = new java.io.ByteArrayOutputStream();
         android.net.http.AndroidHttpClient.newInstance("userAgent").execute(new org.apache.http.client.methods.HttpGet(url)).getEntity().writeTo(content);
         content.close();
-        return String(content.toString());*/
-if(url==0){
-return "1.4 ; 021 ; Added auto-update system\nCleaned up the code\n...and more!"
-}
-else{
-return "function newLevel(){clientMessage(\"Running new code!\")}";
-}
+return new String(content);      
+
+
     }
 	catch (e) {
+toast(e);
         return "0 ; 0 ; Error";
     }
 }
