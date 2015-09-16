@@ -1,4 +1,4 @@
-/*######### release 1.5 ; dev022 ######
+/*######### release 1.5 ; dev024 ######
 ######### INVENTORY TWEAKS PE #########
 ############# by Sin0psysS ############
 #####################################*/
@@ -28,8 +28,8 @@ function iconBitmapFromItemOpaque(rank_x,rank_y) {
 	iconDrawable = android.graphics.Bitmap.createScaledBitmap(iconDrawable,256,256,false);
 	return iconDrawable;
 }
-var ic = iconBitmapFromItemOpaque(3,8);
-var ic2 = iconBitmapFromItemOpaque(14,7)
+var ic = iconBitmapFromItemOpaque(8,4);
+var ic2 = iconBitmapFromItemOpaque(4,7);
 
 
 //Base64 resources
@@ -64,10 +64,11 @@ var slotAmount = 0,rmq = 0,debug = 0,cords = [],show = [0,""];
 
 
 //reading data file
-var smart_tools="on",destacking="off";
+var smart_tools="on",destacking="off",wifi_only=false;
 var dataFile=java.io.File(path+"/data.txt");
 if(!dataFile.exists()) {
 	toast("Thanks for downloading this mod! Have fun!");
+networkPreferencesGUI();
 }
 else {
 	var streamInput=new java.io.FileInputStream(dataFile);
@@ -84,11 +85,10 @@ else {
 	buttonX = parseFloat(main[3]);
 	buttonY = parseFloat(main[4]);
 	if(main[5]==undefined){
-		wifi_only=false;
 		networkPreferencesGUI();
 	}
-	else {
-		wifi_only = Boolean.valueOf(main[5]);
+	else if(main[5]=="true") {
+		wifi_only = true
 	}
 }
 
@@ -98,7 +98,7 @@ var activeNetwork = ctx.getSystemService(ctx.CONNECTIVITY_SERVICE).getActiveNetw
 if(activeNetwork!=null&&activeNetwork.isConnectedOrConnecting()) {
 	if(wifi_only&&wifi_only!=0&&activeNetwork.getType()==1||wifi_only!=0&&!wifi_only) {
 		var versionInfo=loadTxtFromUrl("https://raw.githubusercontent.com/Sin0psysS/ModPE/master/it_versionInfo").split(" ; ");
-		if(Number(versionInfo[1])>22) {
+		if(Number(versionInfo[1])>24) {
 			var newCode=loadTxtFromUrl("https://raw.githubusercontent.com/Sin0psysS/ModPE/master/it_lastVersion");
 			updateTo(versionInfo);
 		}
@@ -122,7 +122,7 @@ function leaveGame() {
 	if(dataFile.exists())
 		dataFile.delete();
 	dataFile.createNewFile();
-	var content = new String("smart_tools:"+smart_tools+"\ndestacking:"+destacking+"\nbutton_x:"+buttonX+"\nbutton_y:"+buttonY);
+	var content = new String("smart_tools:"+smart_tools+"\ndestacking:"+destacking+"\nbutton_x:"+buttonX+"\nbutton_y:"+buttonY+"\nwifi_only:"+wifi_only);
 	var printWriter = new java.io.PrintWriter(dataFile);
 	printWriter.print(content);
 	printWriter.close();
@@ -168,8 +168,11 @@ function procCmd(cmd) {
 		helpMsg(c[1])
 	}
 	if(c[0]=="delete"&&c[1]=="data"){
+var dataFile = java.io.File(path+"/data.txt");
 		if(dataFile.exists())
 			dataFile.delete();
+smart_tools="on",destacking="off",wifi_only=false,buttonX = 5*dp,buttonY = 25*dp;
+clientMessage("Deleted data!");
 	}
 	if(c[0]=="hidegui") {
 		deleteGUIb();
@@ -201,11 +204,11 @@ function procCmd(cmd) {
 }
 
 function helpMsg(page) {
-	if(page=="2){
+	if(page=="2"){
 		clientMessage("§l§8[Inventory Tweaks] §r§o§7 Help page 2 of 2\n§7> §f§o/sort inv§7 to sort your inventory ;\n§7> §f§o/sort chest§7 (then hit a regular chest)§7 to sort a small chest ;\n§7> §f§o/sort large chest§7 (then hit a large chest)§7 to sort a large chest.\n§7> The mod will place the right tool in your hand when you start breaking a block (if you have it), and even craft it for you if you feel lazy.\n\n§7§oContact §8@Sin0psysS§7 to report any bug or problem encountered!\n§lEnjoy the mod!")
 	}
 	else {
-		clientMessage("§l§8[Inventory Tweaks] §r§o§7 A little help there ? - page 1 of 2\n§7> §fUse the§o GUI§r, or these commands :\n§7> §f§o/delete data to reset preferences\n§7> §f§o/showgui §7/§f /hidegui§7 to hide or display the button);
+		clientMessage("§l§8[Inventory Tweaks] §r§o§7 A little help there ? - page 1 of 2\n§7> §fUse the§o GUI§r, or these commands :\n§7> §f§o/delete data to reset preferences\n§7> §f§o/showgui §7/§f /hidegui§7 to hide or display the button");
 	}
 }
 
@@ -1268,14 +1271,14 @@ function updateTo(info) {
 					
 				var txt_1 = new android.widget.TextView(ctx);
 				txt_1.setGravity(android.view.Gravity.CENTER);
-				txt_1.setText("New version available :\n release "+info[0]+" dev"+info[1]+".\n\nChangelog :\n"+info[2]+"\n\nDo you want to install it now?\n");
+				txt_1.setText("New version available :\n release "+info[0]+" dev"+info[1]+".\n\nChangelog :\n"+info[2]+"\n\nDo you want to upgrade now?\n");
 				txt_1.setTextColor(android.graphics.Color.WHITE);
 				txt_1.setTypeface(font);
 				txt_1.setTextSize(14);
 				txt_1.setLineSpacing(0, 1.15);
 				layout.addView(txt_1);
 				
-				var yesButton=button("Ok, do it for me!");
+				var yesButton=button("Ok go on! (auto install)");
 				yesButton.setOnClickListener(new android.view.View.OnClickListener( {
 					onClick: function(viewarg) {
 						if(versionInfo[6]!=undefined)
@@ -1372,14 +1375,14 @@ function networkPreferencesGUI() {
 					
 				var txt_1 = new android.widget.TextView(ctx);
 				txt_1.setGravity(android.view.Gravity.CENTER);
-				txt_1.setText("Network preferences for the auto-update :\nOnly check when connected to a Wifi network?");
+				txt_1.setText("\nNetwork preferences for the auto-update :\nOnly check when connected to a Wifi network?\n");
 				txt_1.setTextColor(android.graphics.Color.WHITE);
 				txt_1.setTypeface(font);
 				txt_1.setTextSize(14);
 				txt_1.setLineSpacing(0, 1.15);
 				layout.addView(txt_1);
 				
-				var yesButton=button("Yes, please");
+				var yesButton=button("Yes, only check on wifi");
 				yesButton.setOnClickListener(new android.view.View.OnClickListener( {
 					onClick: function(viewarg) {
 						wifi_only=true;
@@ -1390,7 +1393,7 @@ function networkPreferencesGUI() {
 				}));
 				layout.addView(yesButton);
 				
-				var noButton=button("Nope, both are all right");
+				var noButton=button("No, use wifi and mobile!");
 				noButton.setOnClickListener(new android.view.View.OnClickListener( {
 					onClick: function(viewarg) {
 						toast("Settings saved! Type '/delete data' in-game to reset them.");
@@ -1402,7 +1405,7 @@ function networkPreferencesGUI() {
 
 				var txt_2 = new android.widget.TextView(ctx);
 				txt_2.setGravity(android.view.Gravity.CENTER);
-				txt_2.setText("\n(Data size : < 4ko for normal check, < 300ko when downloading an update)");
+				txt_2.setText("\n\n(Data size : < 4ko for normal check, < 300ko when downloading an update)");
 				txt_2.setTextColor(android.graphics.Color.WHITE);
 				txt_2.setTypeface(font);
 				txt_2.setTextSize(14);
