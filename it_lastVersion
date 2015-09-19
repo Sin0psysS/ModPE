@@ -1,4 +1,4 @@
-/*######### release 1.5 ; dev024 ######
+/*######### release 1.5 ; dev026 ######
 ######### INVENTORY TWEAKS PE #########
 ############# by Sin0psysS ############
 #####################################*/
@@ -10,7 +10,8 @@
 
 //gui variables
 var ctx = com.mojang.minecraftpe.MainActivity.currentMainActivity.get(),GUI,GUIb,GUIop,GUIc,GUIup,GUInt;
-var dp = ctx.getResources().getDisplayMetrics().density,mX,mY,buttonX = 5*dp,buttonY = 25*dp,pressed=false;
+var dp = ctx.getResources().getDisplayMetrics().density,mX,mY,buttonX = 5*dp,buttonY = 25*dp,pressed=false,newCode;
+var activeNetwork = ctx.getSystemService(ctx.CONNECTIVITY_SERVICE).getActiveNetworkInfo();
 
 
 //creating mod resource folder
@@ -49,6 +50,12 @@ fileOutputStream.write(android.util.Base64.decode(fontString, 0));
 fileOutputStream.close();
 var font = new android.graphics.Typeface.createFromFile(path + "/mcfont.ttf");
 
+var bgString="iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAfxJREFUOI1dkr9r20AYhh87LjjEP6R2kNoi6qh0LBH2VjCITl48dikZ/G90y5K/KFOGgou7FYLloVDI2QJBTqKtpLp2bApGHcwdsm86fd+d3nuf763cXl8WQqYAREkOgO+5HNfCOKNjm7o/ns7xPZcT51njqt2oMwkWGI1TAHZFwZ+Xfb59/YLROMX3XJpndZbrrf75TEim95LK7fVlMZ7Otcpo0EN9l9XUCuMMQJ+rCpny1+riey4d20TIVB9Sao5lAOBYBh3bZDToaYtVgGZyh5ApvucyCRb0L84BtPIkWADwHRcAIVNdq0VJThhnOJaBkKkGpV5Rhvc7+EzTNomSnI5t4nvuIQOAVnfI8u5GW1AvKe8dyyBKchzL2E9BHe7YJo8PP2g39sTDOGNXFMyEpHlWJ1ttWK63LNdbzaWqNuPpHCFTPXf1/CjJNZNybxIsiJJ8z8CxDA2lDE15L188tlJVDQVFWRkNejiWQRhnuh7GGUKmCJnS6g6JkpyTj+/fXimFXVGQrTZ037xgPJ3TbtRZ2z1qqwey1YZqpcJMSF7ZJj/vZ4RxRuXTh3dFGGf0L841WYDXz58eJPB4KStVQF8GmP/6R5TkBwlUNo4TKmS6n4IKk++5PNk9avqTYIHvuTr3xwkFqKmNyrdSbXWHdO5udObVNFRfif4HjC8/LkSmx2oAAAAASUVORK5CYII=";
+var matrix = new android.graphics.Matrix().postScale(16,16);
+var bgDrawable = new android.graphics.drawable.BitmapDrawable(new android.graphics.Bitmap.createBitmap(android.graphics.BitmapFactory.decodeByteArray(android.util.Base64.decode(bgString, 0), 0, android.util.Base64.decode(bgString, 0).length), 0, 0, 16, 16, matrix, false));
+bgDrawable.setTileModeXY(android.graphics.Shader.TileMode.REPEAT, android.graphics.Shader.TileMode.REPEAT);
+bgDrawable.setAlpha(100);
+
 
 //game data variables
 var tools = [[268,283,272,267,276],[270,285,274,257,278],[271,286,275,258,279],[269,284,273,256,277],[359],[259],[290,294,291,292,293]];
@@ -68,7 +75,7 @@ var smart_tools="on",destacking="off",wifi_only=false;
 var dataFile=java.io.File(path+"/data.txt");
 if(!dataFile.exists()) {
 	toast("Thanks for downloading this mod! Have fun!");
-networkPreferencesGUI();
+	networkPreferencesGUI();
 }
 else {
 	var streamInput=new java.io.FileInputStream(dataFile);
@@ -87,22 +94,27 @@ else {
 	if(main[5]==undefined){
 		networkPreferencesGUI();
 	}
-	else if(main[5]=="true") {
+	else {
+		checkForUpdate();
+	}
+	if(main[5]=="true") {
 		wifi_only = true
 	}
 }
 
 
 //auto update
-var activeNetwork = ctx.getSystemService(ctx.CONNECTIVITY_SERVICE).getActiveNetworkInfo();
+function checkForUpdate(){
 if(activeNetwork!=null&&activeNetwork.isConnectedOrConnecting()) {
-	if(wifi_only&&wifi_only!=0&&activeNetwork.getType()==1||wifi_only!=0&&!wifi_only) {
+	if(wifi_only&&activeNetwork.getType()==1||!wifi_only) {
 		var versionInfo=loadTxtFromUrl("https://raw.githubusercontent.com/Sin0psysS/ModPE/master/it_versionInfo").split(" ; ");
-		if(Number(versionInfo[1])>24) {
-			var newCode=loadTxtFromUrl("https://raw.githubusercontent.com/Sin0psysS/ModPE/master/it_lastVersion");
+		if(Number(versionInfo[1])>26) {
+			toast("Downloading update data...");
+			newCode=loadTxtFromUrl("https://raw.githubusercontent.com/Sin0psysS/ModPE/master/it_lastVersion");
 			updateTo(versionInfo);
 		}
 	}
+}
 }
 
 
@@ -110,8 +122,8 @@ if(activeNetwork!=null&&activeNetwork.isConnectedOrConnecting()) {
 
 
 function newLevel() {
-deleteGUIup();
-deleteGUInt();
+	deleteGUIup();
+		deleteGUInt();
 	//icon
 	buttons()
 }
@@ -171,8 +183,8 @@ function procCmd(cmd) {
 var dataFile = java.io.File(path+"/data.txt");
 		if(dataFile.exists())
 			dataFile.delete();
-smart_tools="on",destacking="off",wifi_only=false,buttonX = 5*dp,buttonY = 25*dp;
-clientMessage("Deleted data!");
+			smart_tools="on",destacking="off",wifi_only=false,buttonX = 5*dp,buttonY = 25*dp;
+			clientMessage("Deleted data!");
 	}
 	if(c[0]=="hidegui") {
 		deleteGUIb();
@@ -1271,7 +1283,7 @@ function updateTo(info) {
 					
 				var txt_1 = new android.widget.TextView(ctx);
 				txt_1.setGravity(android.view.Gravity.CENTER);
-				txt_1.setText("New version available :\n release "+info[0]+" dev"+info[1]+".\n\nChangelog :\n"+info[2]+"\n\nDo you want to upgrade now?\n");
+				txt_1.setText("New version available :\n release "+info[0]+" dev"+info[1]+".\n\nChangelog :\n"+info[2]+"\n\nDo you want to install it now?\n");
 				txt_1.setTextColor(android.graphics.Color.WHITE);
 				txt_1.setTypeface(font);
 				txt_1.setTextSize(14);
@@ -1281,8 +1293,6 @@ function updateTo(info) {
 				var yesButton=button("Ok go on! (auto install)");
 				yesButton.setOnClickListener(new android.view.View.OnClickListener( {
 					onClick: function(viewarg) {
-						if(versionInfo[6]!=undefined)
-								dataFile.delete();
 						rewriteMod();
 						GUIup.dismiss();
 						GUIup=null;
@@ -1324,7 +1334,7 @@ function updateTo(info) {
 				}
 				
 				GUIup = new android.widget.PopupWindow(layout1, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
-				GUIup.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.BLACK));
+				GUIup.setBackgroundDrawable(bgDrawable);
 				GUIup.showAtLocation(ctx.getWindow().getDecorView(), android.view.Gravity.CENTER | android.view.Gravity.CENTER, 0, 0);
 			}
 			catch(err) {
@@ -1335,21 +1345,26 @@ function updateTo(info) {
 }
 
 function rewriteMod() {
-	toast("Successfully updated the mod!");
-	var ff=java.io.File(ctx.getDir("modscripts",0)+"/inventory_tweaks.js");
-	if(ff.exists()) {
-		ff.delete;
+	try {
+		toast("Successfully updated the mod!");
+		var mod=java.io.File(ctx.getDir("modscripts",0)+"/inventory_tweaks.js");
+		if(mod.exists()) {
+			mod.delete;
+			mod.createNewFile();
+		}
+		else {
+			mod.createNewFile();
+			toast("You can now delete the old file.");
+		}
+		var fs = new java.io.PrintWriter(mod);
+		fs.print(newCode);
+		fs.close();
+		net.zhuoweizhang.mcpelauncher.ScriptManager.setEnabled(mod, true);
 	}
-	else {
-		ff.createNewFile();
-		toast("You can now delete the old file.");
+	catch(e) {
+		toast("Rewriting error : "+e);
 	}
-	var fs = new java.io.PrintWriter(ff);
-	fs.print(newCode);
-	fs.close();
-	net.zhuoweizhang.mcpelauncher.ScriptManager.setEnabled(ff, true);
 }
-
 
 //Network settings
 function networkPreferencesGUI() {
@@ -1389,6 +1404,14 @@ function networkPreferencesGUI() {
 						toast("Settings changed! Type '/delete data' in-game to reset them.");
 						GUInt.dismiss();
 						GUInt=null;
+						var ff=java.io.File(ctx.getDir("modscripts",0)+"/inventory_tweaks.js");
+						if(ff.exists()) {
+							leaveGame();
+							net.zhuoweizhang.mcpelauncher.ScriptManager.setEnabled(ff, true);
+						}
+						else {
+							toast("Reload the mod now to check for updates.");
+						}
 					}
 				}));
 				layout.addView(yesButton);
@@ -1399,6 +1422,14 @@ function networkPreferencesGUI() {
 						toast("Settings saved! Type '/delete data' in-game to reset them.");
 						GUInt.dismiss();
 						GUInt=null;
+						var ff=java.io.File(ctx.getDir("modscripts",0)+"/inventory_tweaks.js");
+						if(ff.exists()) {
+							leaveGame();
+							net.zhuoweizhang.mcpelauncher.ScriptManager.setEnabled(ff, true);
+						}
+						else {
+							toast("Reload the mod now to check for updates.");
+						}
 					}
 				}));
 				layout.addView(noButton);
@@ -1414,7 +1445,7 @@ function networkPreferencesGUI() {
 				
 				
 				GUInt = new android.widget.PopupWindow(layout1, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
-				GUInt.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.BLACK));
+				GUInt.setBackgroundDrawable(bgDrawable);
 				GUInt.showAtLocation(ctx.getWindow().getDecorView(), android.view.Gravity.CENTER | android.view.Gravity.CENTER, 0, 0);
 			}
 			catch(err) {
@@ -1425,24 +1456,28 @@ function networkPreferencesGUI() {
 }
 
 //Tools
-function toast(msg) {
-	ctx.runOnUiThread(new java.lang.Runnable(){
+function toast(msg,color) {
+	ctx.runOnUiThread(new java.lang.Runnable() {
 		run: function(){
-			android.widget.Toast.makeText(ctx, new android.text.Html.fromHtml("<b>[Inventory Tweaks]</b> "+msg), 0).show();
+			if(color==undefined) {
+				android.widget.Toast.makeText(ctx, new android.text.Html.fromHtml("<b>[Inventory Tweaks]</b> "+msg), 0).show();
+			}
+			else {
+				android.widget.Toast.makeText(ctx, new android.text.Html.fromHtml("<b>[Inventory Tweaks]</b> <font color=\""+color+"\"> "+msg), 0).show();
+			}
 		}
 	});
 }
 
 function loadTxtFromUrl(url) {
-    try {
+	try {
         var content = new java.io.ByteArrayOutputStream();
         android.net.http.AndroidHttpClient.newInstance("userAgent").execute(new org.apache.http.client.methods.HttpGet(url)).getEntity().writeTo(content);
         content.close();
-return new String(content);      
-
-
-    }
+		return new String(content);
+	}
 	catch (e) {
+		toast(e,"black");
         return "0 ; 0 ; Error";
     }
 }
