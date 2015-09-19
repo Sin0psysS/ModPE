@@ -1,4 +1,4 @@
-/*######### release 1.5 ; dev026 ######
+/*######### release 1.5 ; dev027 ######
 ######### INVENTORY TWEAKS PE #########
 ############# by Sin0psysS ############
 #####################################*/
@@ -10,9 +10,9 @@
 
 //gui variables
 var ctx = com.mojang.minecraftpe.MainActivity.currentMainActivity.get(),GUI,GUIb,GUIop,GUIc,GUIup,GUInt;
-var dp = ctx.getResources().getDisplayMetrics().density,mX,mY,buttonX = 5*dp,buttonY = 25*dp,pressed=false,newCode;
+var dp = ctx.getResources().getDisplayMetrics().density,mX,mY,buttonX = 5*dp,buttonY = 25*dp,pressed=false,newCode,pd;
 var activeNetwork = ctx.getSystemService(ctx.CONNECTIVITY_SERVICE).getActiveNetworkInfo();
-
+	
 
 //creating mod resource folder
 var path = android.os.Environment.getExternalStorageDirectory().getAbsolutePath()+"/games/com.mojang/minecraftpe/mods";
@@ -50,9 +50,11 @@ fileOutputStream.write(android.util.Base64.decode(fontString, 0));
 fileOutputStream.close();
 var font = new android.graphics.Typeface.createFromFile(path + "/mcfont.ttf");
 
-var bgString="iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAfxJREFUOI1dkr9r20AYhh87LjjEP6R2kNoi6qh0LBH2VjCITl48dikZ/G90y5K/KFOGgou7FYLloVDI2QJBTqKtpLp2bApGHcwdsm86fd+d3nuf763cXl8WQqYAREkOgO+5HNfCOKNjm7o/ns7xPZcT51njqt2oMwkWGI1TAHZFwZ+Xfb59/YLROMX3XJpndZbrrf75TEim95LK7fVlMZ7Otcpo0EN9l9XUCuMMQJ+rCpny1+riey4d20TIVB9Sao5lAOBYBh3bZDToaYtVgGZyh5ApvucyCRb0L84BtPIkWADwHRcAIVNdq0VJThhnOJaBkKkGpV5Rhvc7+EzTNomSnI5t4nvuIQOAVnfI8u5GW1AvKe8dyyBKchzL2E9BHe7YJo8PP2g39sTDOGNXFMyEpHlWJ1ttWK63LNdbzaWqNuPpHCFTPXf1/CjJNZNybxIsiJJ8z8CxDA2lDE15L188tlJVDQVFWRkNejiWQRhnuh7GGUKmCJnS6g6JkpyTj+/fXimFXVGQrTZ037xgPJ3TbtRZ2z1qqwey1YZqpcJMSF7ZJj/vZ4RxRuXTh3dFGGf0L841WYDXz58eJPB4KStVQF8GmP/6R5TkBwlUNo4TKmS6n4IKk++5PNk9avqTYIHvuTr3xwkFqKmNyrdSbXWHdO5udObVNFRfif4HjC8/LkSmx2oAAAAASUVORK5CYII=";
-var matrix = new android.graphics.Matrix().postScale(16,16);
-var bgDrawable = new android.graphics.drawable.BitmapDrawable(new android.graphics.Bitmap.createBitmap(android.graphics.BitmapFactory.decodeByteArray(android.util.Base64.decode(bgString, 0), 0, android.util.Base64.decode(bgString, 0).length), 0, 0, 16, 16, matrix, false));
+var bgBase="iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAfxJREFUOI1dkr9r20AYhh87LjjEP6R2kNoi6qh0LBH2VjCITl48dikZ/G90y5K/KFOGgou7FYLloVDI2QJBTqKtpLp2bApGHcwdsm86fd+d3nuf763cXl8WQqYAREkOgO+5HNfCOKNjm7o/ns7xPZcT51njqt2oMwkWGI1TAHZFwZ+Xfb59/YLROMX3XJpndZbrrf75TEim95LK7fVlMZ7Otcpo0EN9l9XUCuMMQJ+rCpny1+riey4d20TIVB9Sao5lAOBYBh3bZDToaYtVgGZyh5ApvucyCRb0L84BtPIkWADwHRcAIVNdq0VJThhnOJaBkKkGpV5Rhvc7+EzTNomSnI5t4nvuIQOAVnfI8u5GW1AvKe8dyyBKchzL2E9BHe7YJo8PP2g39sTDOGNXFMyEpHlWJ1ttWK63LNdbzaWqNuPpHCFTPXf1/CjJNZNybxIsiJJ8z8CxDA2lDE15L188tlJVDQVFWRkNejiWQRhnuh7GGUKmCJnS6g6JkpyTj+/fXimFXVGQrTZ037xgPJ3TbtRZ2z1qqwey1YZqpcJMSF7ZJj/vZ4RxRuXTh3dFGGf0L841WYDXz58eJPB4KStVQF8GmP/6R5TkBwlUNo4TKmS6n4IKk++5PNk9avqTYIHvuTr3xwkFqKmNyrdSbXWHdO5udObVNFRfif4HjC8/LkSmx2oAAAAASUVORK5CYII=";
+var matrix = new android.graphics.Matrix();
+matrix.postScale(16,16);
+var bgBitmap = new android.graphics.Bitmap.createBitmap(android.graphics.BitmapFactory.decodeByteArray(android.util.Base64.decode(bgBase, 0), 0, android.util.Base64.decode(bgBase, 0).length), 0, 0, 16, 16, matrix, false);
+var bgDrawable = new android.graphics.drawable.BitmapDrawable(bgBitmap);
 bgDrawable.setTileModeXY(android.graphics.Shader.TileMode.REPEAT, android.graphics.Shader.TileMode.REPEAT);
 bgDrawable.setAlpha(100);
 
@@ -108,8 +110,12 @@ function checkForUpdate(){
 if(activeNetwork!=null&&activeNetwork.isConnectedOrConnecting()) {
 	if(wifi_only&&activeNetwork.getType()==1||!wifi_only) {
 		var versionInfo=loadTxtFromUrl("https://raw.githubusercontent.com/Sin0psysS/ModPE/master/it_versionInfo").split(" ; ");
-		if(Number(versionInfo[1])>26) {
-			toast("Downloading update data...");
+		if(Number(versionInfo[1])>27) {
+			ctx.runOnUiThread(new java.lang.Runnable() {
+				run: function() {
+					pd = android.app.ProgressDialog.show(ctx,"Inventory Tweaks","Downloading update data, please wait...");
+				}
+			});
 			newCode=loadTxtFromUrl("https://raw.githubusercontent.com/Sin0psysS/ModPE/master/it_lastVersion");
 			updateTo(versionInfo);
 		}
@@ -1264,6 +1270,8 @@ function updateTo(info) {
 	ctx.runOnUiThread(new java.lang.Runnable( {
 		run: function() {
 			try {
+				pd.dismiss();
+				
 				var layout = new android.widget.LinearLayout(ctx);
 				layout.setOrientation(1);
 				var menuScroll = new android.widget.ScrollView(ctx);
