@@ -961,7 +961,7 @@ function button(text) {
 //Confirmation menu
 function craftUI(tool) {
 	ModPE.setGameSpeed(4);
-	ctx.runOnUiThread(new java.lang.Runnable( {
+	ctx.runOnUiThread(new java.lang.Runnable() {
 		run: function() {
 			try {
 				var layout = new android.widget.LinearLayout(ctx); layout.setOrientation(1);
@@ -1008,12 +1008,12 @@ function craftUI(tool) {
 				toast("An error occured: " + err);
 			}
 		}
-	}));
+	});
 }
 
 //Icon - Thanks to TBPM for the moving code
 function buttons() {
-	ctx.runOnUiThread(new java.lang.Runnable( {
+	ctx.runOnUiThread(new java.lang.Runnable() {
 		run: function() {
 			try {
 				var layout = new android.widget.LinearLayout(ctx); layout.setOrientation(1);
@@ -1068,12 +1068,12 @@ function buttons() {
 				toast("An error occured: " + err);
 			}
 		}
-	}));
+	});
 }
 
 //Main menu close button
 function closeUI() {
-	ctx.runOnUiThread(new java.lang.Runnable( {
+	ctx.runOnUiThread(new java.lang.Runnable() {
 		run: function() {
 			try {
 				var layout = new android.widget.LinearLayout(ctx);
@@ -1102,13 +1102,13 @@ function closeUI() {
 				toast("An error occured: " + err);
 			}
 		}
-	}));
+	});
 }
 
 //main menu
 function optionsUI() {
 	ModPE.setGameSpeed(4);
-	ctx.runOnUiThread(new java.lang.Runnable( {
+	ctx.runOnUiThread(new java.lang.Runnable() {
 		run: function() {
 			try {
 				var layout = new android.widget.LinearLayout(ctx);
@@ -1261,13 +1261,13 @@ function optionsUI() {
 				toast("An error occured: " + err);
 			}
 		}
-	}));
+	});
 	closeUI();
 }
 
 //Update menu
 function updateTo(info) {
-	ctx.runOnUiThread(new java.lang.Runnable( {
+	ctx.runOnUiThread(new java.lang.Runnable() {
 		run: function() {
 			try {
 				pd.dismiss();
@@ -1349,7 +1349,7 @@ function updateTo(info) {
 				toast("Update menu error " + err);
 			}
 		}
-	}));
+	});
 }
 
 function rewriteMod() {
@@ -1376,7 +1376,7 @@ function rewriteMod() {
 
 //Network settings
 function networkPreferencesGUI() {
-	ctx.runOnUiThread(new java.lang.Runnable( {
+	ctx.runOnUiThread(new java.lang.Runnable() {
 		run: function() {
 			try {
 				var layout = new android.widget.LinearLayout(ctx);
@@ -1462,6 +1462,7 @@ function networkPreferencesGUI() {
 		}
 	}));
 }
+
 
 //Tools
 function toast(msg,color) {
