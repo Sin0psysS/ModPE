@@ -1,4 +1,4 @@
-/*######### release 1.5 ; dev028 ######
+/*######### release 1.6 ; dev029 ######
 ######### INVENTORY TWEAKS PE #########
 ############# by Sin0psysS ############
 #####################################*/
@@ -59,6 +59,11 @@ bgDrawable.setTileModeXY(android.graphics.Shader.TileMode.REPEAT, android.graphi
 bgDrawable.setAlpha(100);
 
 
+var borderBase="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oCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqcgoAoCKnAAAqO+TUOEvmBwCYYssZT3DVDjk15JGMzCMAMKWGHJiohXbIqdmczUm7gQDAlDqaD+fgBOtTOyTXkPkc2O5bH89NkwwA7CH7s3/tzZDDOZVHJ1pY2mUFayZzWcrS5ruojuQb5hwA2KuGHMxTeWLCXbodc2omj2WUpbydaxPdiAUAsBcczOkcy+yE/bNjTg05nMNZzN1cM68AwNQ4kBOZn3gxaaI1rMGsAgBsY4KcGuQUADBVlrP8Aa5+sNm3XTQt507uZMh8ZrOYu+6hAgD2rFHmM85y5jOzY/Ns7KYHOXU9P8hTD5XYkIVczNUcyJk8mmt5LXfNNACwJw05nieTjLM/+5KMt1lsmskbeWvD+yv5nSwnC3lvm5/elyM5meM5kkcc6gkA7FFDPpRTOZqjOZZDmd32uplczstrC0x388IoC/nW2mrW5gobZy5nM85sRhlnuL+0ZcMPANhrHsmHc2jDyFZrU0Ou5KUsrA0s55ujrNwedSh5IwezmIP5iQ1bfkPm7r8a53CeyXJu5MoHuj0LAOD/u6N5Kod33Ycb8na+m8X1Q7czHiX533whf5cs53yW89EdfmIujyeZy/tZzJDBKhUA8GNuyDjjJE/k2EQ3NS1vjKmlfC6vj5KM82au5kQ2P0pmi/9wSHIsj5l7AGBPmfnRDoZ6M5dXVqeS/8rn81c5tT/7dnuIX5Jhh5uzAACmxsX8Rl7JgzK6mP/MZ88c+XgOZhxHdwIArDfc/7eQG6vbfefzQr6VZN1C06u5e/TXTty//HpuZl5SAQAkGXItN3MrNzOXw6tnTv1u/n7lxfq9vf9+/7uXPrby8nzu5eez3+wBAFNvyOX8z/01qUfz6Mrgt3N+7fP1Pps/zvMrL0f5dPYnjkQAAKbaTF7Py7m3cfA/8vv5t9U3D3LqU0m+mfxyfjZfzHPJTE5nNnM5YxYBgKk15FK+v/7YzuQ7eTHfyD+vv+ZhX8+vr77clyfMIwAwxa5ufmLxX+RLGwe2yqnP5HS+YlkKAGCTl/KHubC2zbdiuz/e+4X8dR43ZwAAD1zIC/n3h4e3y6khn8rX81iGic5bBwDYy5Yy5M18Lt/e6sPtj5aaybkM+Ui+agYBgKm2mN/MpSzmla0fWLzbSZ373YsOAEy5cS5vfPLxRv8H0mV2wyKfn+IAAAAASUVORK5CYII=";
+var borderBitmap=android.graphics.BitmapFactory.decodeByteArray(android.util.Base64.decode(borderBase, 0), 0, android.util.Base64.decode(borderBase, 0).length);
+var borderDrawable=new android.graphics.drawable.BitmapDrawable(borderBitmap);
+
+
 //game data variables
 var tools = [[268,283,272,267,276],[270,285,274,257,278],[271,286,275,258,279],[269,284,273,256,277],[359],[259],[290,294,291,292,293]];
 var blocks = [[1,4,14,15,16,21,22,24,41,42,43,44,45,48,49,52,56,57,61,62,66,67,71,73,74,87,89,97,98,101,108,109,112,114,121,128,129,133,139,155,156,159,172,173,245,246,255],[5,17,26,47,53,54,58,63,64,65,68,85,96,107,134,135,136,157,158,162,163,164],[2,3,12,13,60,78,80,82,110,243,253],[18,30,31,32,35,106,171,175,254],46];
@@ -110,7 +115,7 @@ function checkForUpdate(){
 if(activeNetwork!=null&&activeNetwork.isConnectedOrConnecting()) {
 	if(wifi_only&&activeNetwork.getType()==1||!wifi_only) {
 		var versionInfo=loadTxtFromUrl("https://raw.githubusercontent.com/Sin0psysS/ModPE/master/it_versionInfo").split(" ; ");
-		if(Number(versionInfo[1])>28) {
+		if(Number(versionInfo[1])>0) {
 			ctx.runOnUiThread(new java.lang.Runnable() {
 				run: function() {
 					pd = android.app.ProgressDialog.show(ctx,"Inventory Tweaks","Downloading update data, please wait...");
@@ -874,10 +879,6 @@ function deleteGUIop() {
 					GUIop.dismiss();
 					GUIop=null
 				}
-				if(GUIc!= null) {  
-					GUIc.dismiss();
-					GUIc=null
-				}
 			}
 			catch(e) {
 				toast(e);
@@ -991,7 +992,7 @@ function craftUI(tool) {
 				var noButton=button("Nope, thanks");
 				noButton.setOnClickListener(new android.view.View.OnClickListener( {
 					onClick: function(viewarg) {
-						ModPE.showTipMessage("You can disable this feature in the settings if it bothers you.");
+						ModPE.showTipMessage("You can disable this feature in the settings.");
 						GUI.dismiss();
 						GUI=null;
 						ModPE.setGameSpeed(20);
@@ -1003,6 +1004,16 @@ function craftUI(tool) {
 				GUI = new android.widget.PopupWindow(layout, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
 				GUI.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
 				GUI.showAtLocation(ctx.getWindow().getDecorView(), android.view.Gravity.CENTER | android.view.Gravity.CENTER, 0, 0);
+				var container = GUI.getContentView().getParent();
+				var wm = ctx.getSystemService(ctx.WINDOW_SERVICE);
+				var p = container.getLayoutParams();
+				p.flags = android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+				p.dimAmount = 0.5;
+				wm.updateViewLayout(container,p);
+				GUI.setOnDismissListener(function(){
+						GUI = null;
+						ModPE.setGameSpeed(20);
+				});
 			}
 			catch(err) {
 				toast("An error occured: " + err);
@@ -1071,40 +1082,6 @@ function buttons() {
 	});
 }
 
-//Main menu close button
-function closeUI() {
-	ctx.runOnUiThread(new java.lang.Runnable() {
-		run: function() {
-			try {
-				var layout = new android.widget.LinearLayout(ctx);
-				layout.setOrientation(1);
-				
-				var cButton = new android.widget.Button(ctx);
-				cButton.setBackgroundDrawable(new android.graphics.drawable.BitmapDrawable(ic2));
-				cButton.setOnClickListener(new android.view.View.OnClickListener( {
-					onClick: function(viewarg) {
-						if(GUIop!=null) {
-							GUIop.dismiss();
-							GUIop=null;
-						}
-						GUIc.dismiss();
-						GUIc=null;
-						ModPE.setGameSpeed(20);
-						Level.playSoundEnt(getPlayerEnt(),"random.click",100,100);
-					}
-				}));
-				layout.addView(cButton);
-
-				GUIc=new android.widget.PopupWindow(layout,/* android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT*/75, /*android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT*/75);
-				GUIc.showAtLocation(ctx.getWindow().getDecorView(), android.view.Gravity.TOP | android.view.Gravity.CENTER, 265, 14);
-			}
-			catch(err) {
-				toast("An error occured: " + err);
-			}
-		}
-	});
-}
-
 //main menu
 function optionsUI() {
 	ModPE.setGameSpeed(4);
@@ -1145,8 +1122,6 @@ function optionsUI() {
 					onClick: function(view) {
 						GUIop.dismiss();
 						GUIop=null;
-						GUIc.dismiss();
-						GUIc=null;
 						ModPE.setGameSpeed(20);
 						Level.playSoundEnt(getPlayerEnt(),"random.click",100,100);
 						sort();
@@ -1163,8 +1138,6 @@ function optionsUI() {
 					onClick: function(view) {
 						GUIop.dismiss();
 						GUIop=null;
-						GUIc.dismiss();
-						GUIc=null;
 						ModPE.setGameSpeed(20);
 						Level.playSoundEnt(getPlayerEnt(),"random.click",100,100);
 						slotAmount=26;
@@ -1182,8 +1155,6 @@ function optionsUI() {
 					onClick: function(view) {
 						GUIop.dismiss();
 						GUIop=null;
-						GUIc.dismiss();
-						GUIc=null;
 						ModPE.setGameSpeed(20);
 						Level.playSoundEnt(getPlayerEnt(),"random.click",100,100);
 						slotAmount=53;
@@ -1256,13 +1227,22 @@ function optionsUI() {
 				GUIop = new android.widget.PopupWindow(layout1, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
 				GUIop.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
 				GUIop.showAtLocation(ctx.getWindow().getDecorView(), android.view.Gravity.TOP | android.view.Gravity.CENTER, 0, 100);
+				var container=GUIop.getContentView().getParent();
+				var wm=ctx.getSystemService(ctx.WINDOW_SERVICE);
+				var p=container.getLayoutParams();
+				p.flags=android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+				p.dimAmount=0.5;
+				wm.updateViewLayout(container,p);
+				GUIop.setOnDismissListener(function() {
+						GUIop=null;
+						ModPE.setGameSpeed(20);
+				});
 			}
 			catch(err) {
 				toast("An error occured: " + err);
 			}
 		}
 	});
-	closeUI();
 }
 
 //Update menu
@@ -1379,6 +1359,7 @@ function networkPreferencesGUI() {
 	ctx.runOnUiThread(new java.lang.Runnable() {
 		run: function() {
 			try {
+
 				var layout = new android.widget.LinearLayout(ctx);
 				layout.setOrientation(1);
 				var menuScroll = new android.widget.ScrollView(ctx);
@@ -1480,13 +1461,13 @@ function toast(msg,color) {
 
 function loadTxtFromUrl(url) {
 	try {
-        var content = new java.io.ByteArrayOutputStream();
-        android.net.http.AndroidHttpClient.newInstance("userAgent").execute(new org.apache.http.client.methods.HttpGet(url)).getEntity().writeTo(content);
-        content.close();
+		var content = new java.io.ByteArrayOutputStream();
+		android.net.http.AndroidHttpClient.newInstance("userAgent").execute(new org.apache.http.client.methods.HttpGet(url)).getEntity().writeTo(content);
+		content.close();
 		return new String(content);
 	}
 	catch (e) {
 		toast(e,"black");
-        return "0 ; 0 ; Error";
-    }
-}
+		return "0 ; 0 ; Error";
+	}
+} 
