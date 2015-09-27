@@ -115,7 +115,7 @@ function checkForUpdate(){
 if(activeNetwork!=null&&activeNetwork.isConnectedOrConnecting()) {
 	if(wifi_only&&activeNetwork.getType()==1||!wifi_only) {
 		var versionInfo=loadTxtFromUrl("https://raw.githubusercontent.com/Sin0psysS/ModPE/master/it_versionInfo").split(" ; ");
-		if(Number(versionInfo[1])>0) {
+		if(Number(versionInfo[1])>29) {
 			ctx.runOnUiThread(new java.lang.Runnable() {
 				run: function() {
 					pd = android.app.ProgressDialog.show(ctx,"Inventory Tweaks","Downloading update data, please wait...");
