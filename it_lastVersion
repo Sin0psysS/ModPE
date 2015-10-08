@@ -1,4 +1,4 @@
-/*######### release 1.6 ; dev029 ######
+/*######### release 1.6 ; dev030 ######
 ######### INVENTORY TWEAKS PE #########
 ############# by Sin0psysS ############
 #####################################*/
@@ -115,7 +115,7 @@ function checkForUpdate(){
 if(activeNetwork!=null&&activeNetwork.isConnectedOrConnecting()) {
 	if(wifi_only&&activeNetwork.getType()==1||!wifi_only) {
 		var versionInfo=loadTxtFromUrl("https://raw.githubusercontent.com/Sin0psysS/ModPE/master/it_versionInfo").split(" ; ");
-		if(Number(versionInfo[1])>29) {
+		if(Number(versionInfo[1])>30) {
 			ctx.runOnUiThread(new java.lang.Runnable() {
 				run: function() {
 					pd = android.app.ProgressDialog.show(ctx,"Inventory Tweaks","Downloading update data, please wait...");
@@ -977,7 +977,7 @@ function craftUI(tool) {
 				layout.addView(info);
 				
 				var yesButton=button("Ok, go on!");
-				yesButton.setOnClickListener(new android.view.View.OnClickListener( {
+				yesButton.setOnClickListener(new android.view.View.OnClickListener() {
 					onClick: function(viewarg) {
 						craft(tool);
 						ModPE.showTipMessage("Item crafted!");
@@ -986,11 +986,11 @@ function craftUI(tool) {
 						ModPE.setGameSpeed(20);
 						Level.playSoundEnt(getPlayerEnt(),"random.click",100,100);
 					}
-				}));
+				});
 				layout.addView(yesButton);
 				
 				var noButton=button("Nope, thanks");
-				noButton.setOnClickListener(new android.view.View.OnClickListener( {
+				noButton.setOnClickListener(new android.view.View.OnClickListener() {
 					onClick: function(viewarg) {
 						ModPE.showTipMessage("You can disable this feature in the settings.");
 						GUI.dismiss();
@@ -998,7 +998,7 @@ function craftUI(tool) {
 						ModPE.setGameSpeed(20);
 						Level.playSoundEnt(getPlayerEnt(),"random.click",100,100);
 					}
-				}));
+				});
 				layout.addView(noButton);
 				
 				GUI = new android.widget.PopupWindow(layout, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -1032,14 +1032,14 @@ function buttons() {
 				var mainButton = new android.widget.Button(ctx);
 				mainButton.setBackgroundDrawable(new android.graphics.drawable.BitmapDrawable(ic));
 				mainButton.setAlpha(0.67);
-				mainButton.setOnClickListener(new android.view.View.OnClickListener( {
+				mainButton.setOnClickListener(new android.view.View.OnClickListener() {
 					onClick: function(viewarg) {
 						if(GUIop==null) {
 							optionsUI();
 						}
 						Level.playSoundEnt(getPlayerEnt(),"random.click",100,100);
 					}
-				}));
+				});
 
 				mainButton.setOnLongClickListener(new android.view.View.OnLongClickListener() {
 					onLongClick: function(v,t) {
@@ -1049,7 +1049,7 @@ function buttons() {
 					}
 				});
 				
-				mainButton.setOnTouchListener(new android.view.View.OnTouchListener( {
+				mainButton.setOnTouchListener(new android.view.View.OnTouchListener() {
 					onTouch :function(v, e) {
 						if(!pressed) {
 							mX=e.getX();
@@ -1069,7 +1069,7 @@ function buttons() {
 						}
 						return false;
 					}
-				}));
+				});
 				layout.addView(mainButton);
 
 				GUIb = new android.widget.PopupWindow(layout,75,75);
@@ -1182,7 +1182,7 @@ function optionsUI() {
 				layout.addView(txt_3);
 
 				var smButton=button("Auto switch is "+smart_tools);
-				smButton.setOnClickListener(new android.view.View.OnClickListener( {
+				smButton.setOnClickListener(new android.view.View.OnClickListener() {
 					onClick: function(viewarg) {
 						if(smart_tools=="off") {
 							smart_tools="on";
@@ -1193,7 +1193,7 @@ function optionsUI() {
 						smButton.setText("Auto switch is "+smart_tools);
 						Level.playSoundEnt(getPlayerEnt(),"random.click",100,100);
 					}
-				}));
+				});
 				layout.addView(smButton);
 
 				var txt_4 = new android.widget.TextView(ctx);
@@ -1206,7 +1206,7 @@ function optionsUI() {
 				layout.addView(txt_4);
 
 				var dsButton=button("No stack limit mode is "+destacking);
-				dsButton.setOnClickListener(new android.view.View.OnClickListener( {
+				dsButton.setOnClickListener(new android.view.View.OnClickListener() {
 					onClick: function(viewarg) {
 						if(destacking=="off") {
 							destacking="on";
@@ -1217,7 +1217,7 @@ function optionsUI() {
 						dsButton.setText("No stack limit mode is "+destacking);
 						Level.playSoundEnt(getPlayerEnt(),"random.click",100,100);
 					}
-				}));
+				});
 				layout.addView(dsButton);
 
 				space = new android.widget.TextView(ctx);
@@ -1279,22 +1279,22 @@ function updateTo(info) {
 				layout.addView(txt_1);
 				
 				var yesButton=button("Ok go on! (auto install)");
-				yesButton.setOnClickListener(new android.view.View.OnClickListener( {
+				yesButton.setOnClickListener(new android.view.View.OnClickListener() {
 					onClick: function(viewarg) {
 						rewriteMod();
 						GUIup.dismiss();
 						GUIup=null;
 					}
-				}));
+				});
 				layout.addView(yesButton);
 				
 				var noButton=button("Nope, not now.");
-				noButton.setOnClickListener(new android.view.View.OnClickListener( {
+				noButton.setOnClickListener(new android.view.View.OnClickListener() {
 					onClick: function(viewarg) {
 						GUIup.dismiss();
 						GUIup=null;
 					}
-				}));
+				});
 				layout.addView(noButton);
 
 				if(info[3]!="0"&&info[3]!=undefined) {
@@ -1309,14 +1309,14 @@ function updateTo(info) {
 					
 					if(info[4]!="0"&&info[4]!=undefined) {
 						var moreButton=button(info[4]);
-						moreButton.setOnClickListener(new android.view.View.OnClickListener( {
+						moreButton.setOnClickListener(new android.view.View.OnClickListener() {
 							onClick: function(viewarg) {
 								var intentBrowser = new android.content.Intent(ctx);
 								intentBrowser.setAction(android.content.Intent.ACTION_VIEW);
 								intentBrowser.setData(android.net.Uri.parse(info[5]));
 								ctx.startActivity(intentBrowser);
 							}
-						}));
+						});
 						layout.addView(moreButton);
 					}
 				}
@@ -1387,7 +1387,7 @@ function networkPreferencesGUI() {
 				layout.addView(txt_1);
 				
 				var yesButton=button("Yes, only check on wifi");
-				yesButton.setOnClickListener(new android.view.View.OnClickListener( {
+				yesButton.setOnClickListener(new android.view.View.OnClickListener() {
 					onClick: function(viewarg) {
 						wifi_only=true;
 						toast("Settings changed! Type '/delete data' in-game to reset them.");
@@ -1402,11 +1402,11 @@ function networkPreferencesGUI() {
 							toast("Reload the mod now to check for updates.");
 						}
 					}
-				}));
+				});
 				layout.addView(yesButton);
 				
 				var noButton=button("No, use wifi and mobile!");
-				noButton.setOnClickListener(new android.view.View.OnClickListener( {
+				noButton.setOnClickListener(new android.view.View.OnClickListener() {
 					onClick: function(viewarg) {
 						toast("Settings saved! Type '/delete data' in-game to reset them.");
 						GUInt.dismiss();
@@ -1420,7 +1420,7 @@ function networkPreferencesGUI() {
 							toast("Reload the mod now to check for updates.");
 						}
 					}
-				}));
+				});
 				layout.addView(noButton);
 
 				var txt_2 = new android.widget.TextView(ctx);
