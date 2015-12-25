@@ -1,4 +1,4 @@
-/*####### release 0, build 005  ########
+/*####### release 0, build 006  ########
 ############## PROJECT α ##############
 ############# by Sin0psysS ############
 #######################################
@@ -41,7 +41,7 @@
 		Same for the time jump system*/
 
 
-var version = 6,rversion=0;
+var version = 006,rversion=0;
 
 var ctx = com.mojang.minecraftpe.MainActivity.currentMainActivity.get(),
 activeNetwork = ctx.getSystemService(ctx.CONNECTIVITY_SERVICE).getActiveNetworkInfo(),
