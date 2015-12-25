@@ -38,13 +38,10 @@
 004 :	fixed android version
 		detecting bug
 005 :	Major GUI improvement
-		Same for the time jump system
-		Started to clean up the code
-		Fixed the KitKat sdk number
-		again, woops*/
+		Same for the time jump system*/
 
 
-var version = 006,rversion=0;
+var version = 005,rversion=0;
 
 var ctx = com.mojang.minecraftpe.MainActivity.currentMainActivity.get(),
 activeNetwork = ctx.getSystemService(ctx.CONNECTIVITY_SERVICE).getActiveNetworkInfo(),
@@ -130,22 +127,6 @@ var GUI = {
 	setMcText:function(view,text) { //Very clever idea by @TaQuItO_988
 		text = text.split("\n").join("<br/>");text = text.split("§o").join("</i><i>");text = text.split("§l").join("</b><b>");text = text.split("§0").join("</font><font color=#000000>");text = text.split("§1").join("</font><font color=#0000AA>");text = text.split("§2").join("</font><font color=#00AA00>");text = text.split("§3").join("</font><font color=#00AAAA>");text = text.split("§4").join("</font><font color=#AA0000>");text = text.split("§5").join("</font><font color=#AA00AA>");text = text.split("§6").join("</font><font color=#FFAA00>");text = text.split("§7").join("</font><font color=#AAAAAA>");text = text.split("§8").join("</font><font color=#555550>");text = text.split("§9").join("</font><font color=#5555FF>");text = text.split("§a").join("</font><font color=#55FF55>");text = text.split("§b").join("</font><font color=#55FFFF>");text = text.split("§c").join("</font><font color=#FF5555>");text = text.split("§d").join("</font><font color=#FF55FF>");text = text.split("§e").join("</font><font color=#FFFF55>");text = text.split("§f").join("</font><font color=#FFFFFF>");
 		view.setText(android.text.Html.fromHtml(text));
-	},
-	layout:function(orientation) {
-		var ans = new android.widget.LinearLayout(ctx);
-		if(orientation!=null)
-			ans.setOrientation(orientation);
-		return ans;
-	},
-	setLayoutParams:function(target,shouldKeepOld,marginL,marginT,marginR,marginB,sizeX,sizeY) {
-		if(shouldKeepOld) {
-			
-		}
-		else {
-		var ans = new android.widget.LinearLayout.LayoutParams(sizeX,sizeY);
-		ans.setMargins(marginL*dp,marginT*dp,marginR*dp,marginB*dp);
-		}
-		target.setLayoutParams(ans);
 	}
 };
 
@@ -406,10 +387,11 @@ function settingsMenu() {
 				try {
 					ModPE.setGameSpeed(2);
 					
-					var layout = GUI.layout(1);
-					GUI.setLayoutParams(layout,false,15,15,15,15,android.widget.LinearLayout.LayoutParams.MATCH_PARENT,android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
-					
-					var titleLayout = GUI.layout();
+					var layout = new android.widget.LinearLayout(ctx);
+					layout.setOrientation(1);
+					var lParams = new android.widget.LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.MATCH_PARENT,android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+					lParams.setMargins(15*dp,15*dp,15*dp,15*dp);
+					var titleLayout = new android.widget.LinearLayout(ctx);
 					layout.addView(titleLayout,lParams);
 
 					var title = mcText("\n§eSettings & info\n",17);
@@ -2164,7 +2146,10 @@ function rewriteMod() {
 		}
 		else {
 			mod.createNewFile();
-			toast("You can now delete the old file.");
+			toast("Now make sure you delete the old file.","red");
+			toast("Now make sure you delete the old file.","red");
+			toast("Now make sure you delete the old file.","red");
+			toast("Now make sure you delete the old file.","red");
 		}
 		var fs = new java.io.PrintWriter(mod);
 		fs.print(newCode);
