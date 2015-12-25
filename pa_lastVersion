@@ -41,7 +41,7 @@
 		Same for the time jump system*/
 
 
-var version = 006,rversion=0;
+var version = 6,rversion=0;
 
 var ctx = com.mojang.minecraftpe.MainActivity.currentMainActivity.get(),
 activeNetwork = ctx.getSystemService(ctx.CONNECTIVITY_SERVICE).getActiveNetworkInfo(),
