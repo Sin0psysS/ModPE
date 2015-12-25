@@ -1,4 +1,4 @@
-/*####### release 0, build 006  ########
+/*####### release 0, build 007  ########
 ############## PROJECT α ##############
 ############# by Sin0psysS ############
 #######################################
@@ -38,10 +38,13 @@
 004 :	fixed android version
 		detecting bug
 005 :	Major GUI improvement
-		Same for the time jump system*/
+		Same for the time jump system
+006 : first auto update release
+fixed kitkat sdk int bug (again)
+007: Fixed gap between the tab buttons for tablets*/
 
 
-var version = 006,rversion=0;
+var version = 007,rversion=0;
 
 var ctx = com.mojang.minecraftpe.MainActivity.currentMainActivity.get(),
 activeNetwork = ctx.getSystemService(ctx.CONNECTIVITY_SERVICE).getActiveNetworkInfo(),
@@ -638,7 +641,7 @@ tab1.setLayoutParams(params);
 					tab2.setImageBitmap(bitmaps.ic2);
 					tabLayout.addView(tab2);
 					params = tab2.getLayoutParams();
-					params.setMargins(0,10*dp,0,0);
+					params.setMargins(0,((((displayHeight*dp*7)/8)-(5*dp))/4-(64*dp))/2,0,0);
 					tab2.setLayoutParams(params);
 					tab2.setOnClickListener(function(viewarg) {
 						if(GUI.main.tab==1) {
@@ -663,12 +666,12 @@ tab2.setOnTouchListener(function(v, event) {
 						var action = event.getActionMasked();
 						if(action == android.view.MotionEvent.ACTION_CANCEL || action == android.view.MotionEvent.ACTION_UP) {
 params=new android.widget.LinearLayout.LayoutParams(32*dp,32*dp);
-params.setMargins(0,10*dp,0,0);
+params.setMargins(0,((((displayHeight*dp*7)/8)-(5*dp))/4-(64*dp))/2,0,0);
 tab2.setLayoutParams(params);
 						}
 						else if(action==0) {
 							params=new android.widget.LinearLayout.LayoutParams(28*dp,28*dp);
-params.setMargins(2*dp,13*dp,2*dp,2*dp);
+params.setMargins(2*dp,((((displayHeight*dp*7)/8)-(5*dp))/4-(64*dp))/2+(2*dp),2*dp,2*dp);
 tab2.setLayoutParams(params);
 						}
 						return false;
@@ -2147,9 +2150,9 @@ function rewriteMod() {
 		else {
 			mod.createNewFile();
 			toast("Now make sure you delete the old file.","red");
-			toast("Now make sure you delete the old file.","red");
-			toast("Now make sure you delete the old file.","red");
-			toast("Now make sure you delete the old file.","red");
+toast("Now make sure you delete the old file.","red");
+toast("Now make sure you delete the old file.","red");
+toast("Now make sure you delete the old file.","red");
 		}
 		var fs = new java.io.PrintWriter(mod);
 		fs.print(newCode);
