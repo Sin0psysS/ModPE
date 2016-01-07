@@ -1,50 +1,10 @@
-/*####### release 0, build 007  ########
-############## PROJECT α ##############
+/*####### release 1.0, build 009  #######
+############## MOMENTUM ##############
 ############# by Sin0psysS ############
-#######################################
-			
-			Build changelog :
-001 :	very first operationnal version
-		only IT is implemented
-		only the shape of the final
-		main menu is built, as well as
-		the animated icon drawable, yay
-		total GUI and syntax mess, it's
-		a miracle everything works
-		already 1696 lines of code,
-		and so much left to do..
-002 :	added debug mode structure
-		fixed conflicts with the 'GUI'
-		variable
-		updated sorting arrays to 0.12
-		loots
-		added debug to the options
-003 :	updated icons to 0.13
-		debugged the debug
-		mc-like menu content theme
-		fixed data saving/reading which
-		was broken
-		added time control features
-		fixed time computing/display
-		arranged the GUI a little bit.
-		Reached 2559 lines of code
-		Cleaned up the code a little
-		Added bc settings to data
-		saving, cleaned up the GUI
-		Updated /help and other
-		commands
-		Upgraded log functions,
-		created log folder
-004 :	fixed android version
-		detecting bug
-005 :	Major GUI improvement
-		Same for the time jump system
-006 : first auto update release
-fixed kitkat sdk int bug (again)
-007: Fixed gap between the tab buttons for tablets*/
+#######################################*/
 
 
-var version = 007,rversion=0;
+var version = 009,rversion=1;
 
 var ctx = com.mojang.minecraftpe.MainActivity.currentMainActivity.get(),
 activeNetwork = ctx.getSystemService(ctx.CONNECTIVITY_SERVICE).getActiveNetworkInfo(),
@@ -52,7 +12,7 @@ metrics = ctx.getResources().getDisplayMetrics();
 ctx.getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
 var path = android.os.Environment.getExternalStorageDirectory().getAbsolutePath()+"/games/com.mojang/minecraftpe/mods",
-logPath = android.os.Environment.getExternalStorageDirectory().getAbsolutePath()+"/log_project_α";
+logPath = android.os.Environment.getExternalStorageDirectory().getAbsolutePath()+"/log_momentum";
 if(!java.io.File(logPath).exists())
 	java.io.File(logPath).mkdirs();
 if(!java.io.File(path).exists())
@@ -60,7 +20,7 @@ if(!java.io.File(path).exists())
 path += "/by_Sin0psysS";
 if(!java.io.File(path).exists())
 	java.io.File(path).mkdirs();
-path += "/project_α";
+path += "/momentum";
 if(!java.io.File(path).exists())
 	java.io.File(path).mkdirs();
 
@@ -126,25 +86,21 @@ var GUI = {
 		id:null
 	},
 	size:1,
-	sizeFactor:0,
-	setMcText:function(view,text) { //Very clever idea by @TaQuItO_988
-		text = text.split("\n").join("<br/>");text = text.split("§o").join("</i><i>");text = text.split("§l").join("</b><b>");text = text.split("§0").join("</font><font color=#000000>");text = text.split("§1").join("</font><font color=#0000AA>");text = text.split("§2").join("</font><font color=#00AA00>");text = text.split("§3").join("</font><font color=#00AAAA>");text = text.split("§4").join("</font><font color=#AA0000>");text = text.split("§5").join("</font><font color=#AA00AA>");text = text.split("§6").join("</font><font color=#FFAA00>");text = text.split("§7").join("</font><font color=#AAAAAA>");text = text.split("§8").join("</font><font color=#555550>");text = text.split("§9").join("</font><font color=#5555FF>");text = text.split("§a").join("</font><font color=#55FF55>");text = text.split("§b").join("</font><font color=#55FFFF>");text = text.split("§c").join("</font><font color=#FF5555>");text = text.split("§d").join("</font><font color=#FF55FF>");text = text.split("§e").join("</font><font color=#FFFF55>");text = text.split("§f").join("</font><font color=#FFFFFF>");
-		view.setText(android.text.Html.fromHtml(text));
-	}
+	sizeFactor:0
 };
 
 var settings = {
 	smart_tools:"on",
 	destacking:"off",
 	wifi_only:false,
-	debug_mode:true
+	debug_mode:false
 }
 
 //debug mode
 var sdf = new java.text.SimpleDateFormat("yyMMdd_HHmm"),
 date = sdf.format(new java.util.Date());
 var log = {
-    str: "Project α by Sin0psysS release "+rversion+" dev "+version +
+    str: "Momentum modification by Sin0psysS release "+rversion+" dev "+version +
          "\nMCPE v" + ModPE.getMinecraftVersion() +
          "\nAndroid API Level " + android.os.Build.VERSION.SDK_INT +
          "\n" + ctx.getPackageName() + " v" + ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).versionName +
@@ -156,12 +112,12 @@ var log = {
             this.lock.acquire();
             try {
                 this.str += "\n" + msg;
-                var logFile = new java.io.File(logPath+"/log_project_α.txt");
+                var logFile = new java.io.File(logPath+"/log_momentum.txt");
 				if(logFile.exists()){
 					logFile.delete();
 					logFile.createNewFile();
 				}
-				var logFile = new java.io.File(logPath+"/log_project_α_"+date+".txt");
+				var logFile = new java.io.File(logPath+"/log_momentum"+date+".txt");
 				if (logFile.exists())
 					logFile.delete();
 				logFile.createNewFile();
@@ -279,15 +235,15 @@ else {
 	buttonY = parseFloat(main[4][0]);
 	if(main[5][0]==undefined)
 		networkPreferencesGUI();
-	else
-		checkForUpdate();
+	else {
 	if(main[5][0]=="true")
 		settings.wifi_only = true
+checkForUpdate();
+}
 	if(main[6][0]=="true")
 		settings.debug_mode=true;
 	else
 		settings.debug_mode=false;
-	
 	if(main[7][0]=="true")
 		sdisp=true;
 	else
@@ -303,13 +259,55 @@ else {
 	}
 }
 
+var Tool = {
+	setMcText:function(view,text) { //Very clever idea by @TaQuItO_988
+		text = text.split("\n").join("<br/>");text = text.split("§o").join("</i><i>");text = text.split("§l").join("</b><b>");text = text.split("§0").join("</font><font color=#000000>");text = text.split("§1").join("</font><font color=#0000AA>");text = text.split("§2").join("</font><font color=#00AA00>");text = text.split("§3").join("</font><font color=#00AAAA>");text = text.split("§4").join("</font><font color=#AA0000>");text = text.split("§5").join("</font><font color=#AA00AA>");text = text.split("§6").join("</font><font color=#FFAA00>");text = text.split("§7").join("</font><font color=#AAAAAA>");text = text.split("§8").join("</font><font color=#555550>");text = text.split("§9").join("</font><font color=#5555FF>");text = text.split("§a").join("</font><font color=#55FF55>");text = text.split("§b").join("</font><font color=#55FFFF>");text = text.split("§c").join("</font><font color=#FF5555>");text = text.split("§d").join("</font><font color=#FF55FF>");text = text.split("§e").join("</font><font color=#FFFF55>");text = text.split("§f").join("</font><font color=#FFFFFF>");
+		view.setText(android.text.Html.fromHtml(text));
+	},
+	dimView:function(view,dAmount) {
+		var wm = ctx.getSystemService(ctx.WINDOW_SERVICE),
+		params = view.getLayoutParams();
+		params.flags = android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+		params.dimAmount = dAmount;
+		wm.updateViewLayout(view,params);
+	},
+	New:{
+		params:function(width,height) {
+			return new android.widget.LinearLayout.LayoutParams(width,height);
+		},
+		layout:function(orientation) {
+			var lyt = new android.widget.LinearLayout(ctx);
+			if(orientation!=null)
+				lyt.setOrientation(orientation);
+			return lyt;
+		},
+		imageView:function(bitmap) {
+			var iV = new android.widget.ImageView(ctx);
+			iV.setImageBitmap(bitmap);
+			return iV;
+		},
+		seekBar:function(max,progress) {
+			var sB = new android.widget.SeekBar(ctx);
+			sB.setMax(max);
+			sB.setProgress(progress);
+			return sB;
+		},
+		popupWindow:function(view,width,height,decor,x,y,xAdd,yAdd) {
+			var popup = new android.widget.PopupWindow(view, width, height);
+			popup.showAtLocation(decor, x | y, xAdd, yAdd);
+			return popup;
+		}
+	}
+	
+}
+
 function mcButton(text) {
 	var mcbtn = new android.widget.Button(ctx);
-	GUI.setMcText(mcbtn,text);
+	Tool.setMcText(mcbtn,text);
 	mcbtn.setBackgroundDrawable(bitmaps.btn_np);
 	mcbtn.setPaintFlags(mcbtn.getPaintFlags() | android.graphics.Paint.SUBPIXEL_TEXT_FLAG);
 	mcbtn.setTextSize(parseInt(GUI.size*14));
-	mcbtn.setLineSpacing(0, parseInt(GUI.size*1.15));
+	mcbtn.setLineSpacing(0, 1.15);
 	mcbtn.setTypeface(font);
 	mcbtn.setTextColor(android.graphics.Color.parseColor("#FFDDDDDD"));
 	mcbtn.setPadding(0, 0, 0, 0);
@@ -337,7 +335,7 @@ function mcButton(text) {
 
 function mcText(text,tsize) {
 	var txt = new android.widget.TextView(ctx);
-	GUI.setMcText(txt,text);
+	Tool.setMcText(txt,text);
 	txt.setTextColor(android.graphics.Color.WHITE);
 	txt.setTypeface(font);
 	if(android.os.Build.VERSION.SDK_INT>19)
@@ -350,6 +348,21 @@ function mcText(text,tsize) {
 	else
 		txt.setTextSize(parseInt(GUI.size*14));
 	return txt;
+}
+
+function mcToggle(text,isActive) {
+	var mcT = new android.widget.Switch(ctx);
+	Tool.setMcText(mcT,text);
+	mcT.setTextColor(android.graphics.Color.WHITE);
+	mcT.setTypeface(font);
+	mcT.setLineSpacing(0, 1.15);
+	mcT.setTextSize(parseInt(14*GUI.size));
+	if(android.os.Build.VERSION.SDK_INT>19)
+		mcT.setShadowLayer(1, Math.round(mcT.getLineHeight() / 8), Math.round(mcT.getLineHeight() / 8), android.graphics.Color.parseColor("#FF333333"));
+	else
+		mcT.setShadowLayer(0.0001, Math.round(mcT.getLineHeight() / 8), Math.round(mcT.getLineHeight() / 8), android.graphics.Color.parseColor("#FF333333"));
+	mcT.setChecked(isActive);
+	return mcT;
 }
 
 function playSound(sound) {
@@ -366,54 +379,32 @@ function playSound(sound) {
 	}
 }
 
-//IT dev30 B64
-var bgBase="iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAfxJREFUOI1dkr9r20AYhh87LjjEP6R2kNoi6qh0LBH2VjCITl48dikZ/G90y5K/KFOGgou7FYLloVDI2QJBTqKtpLp2bApGHcwdsm86fd+d3nuf763cXl8WQqYAREkOgO+5HNfCOKNjm7o/ns7xPZcT51njqt2oMwkWGI1TAHZFwZ+Xfb59/YLROMX3XJpndZbrrf75TEim95LK7fVlMZ7Otcpo0EN9l9XUCuMMQJ+rCpny1+riey4d20TIVB9Sao5lAOBYBh3bZDToaYtVgGZyh5ApvucyCRb0L84BtPIkWADwHRcAIVNdq0VJThhnOJaBkKkGpV5Rhvc7+EzTNomSnI5t4nvuIQOAVnfI8u5GW1AvKe8dyyBKchzL2E9BHe7YJo8PP2g39sTDOGNXFMyEpHlWJ1ttWK63LNdbzaWqNuPpHCFTPXf1/CjJNZNybxIsiJJ8z8CxDA2lDE15L188tlJVDQVFWRkNejiWQRhnuh7GGUKmCJnS6g6JkpyTj+/fXimFXVGQrTZ037xgPJ3TbtRZ2z1qqwey1YZqpcJMSF7ZJj/vZ4RxRuXTh3dFGGf0L841WYDXz58eJPB4KStVQF8GmP/6R5TkBwlUNo4TKmS6n4IKk++5PNk9avqTYIHvuTr3xwkFqKmNyrdSbXWHdO5udObVNFRfif4HjC8/LkSmx2oAAAAASUVORK5CYII=";
-var matrix = new android.graphics.Matrix();
-matrix.postScale(16,16);
-var bgBitmap = new android.graphics.Bitmap.createBitmap(android.graphics.BitmapFactory.decodeByteArray(android.util.Base64.decode(bgBase, 0), 0, android.util.Base64.decode(bgBase, 0).length), 0, 0, 16, 16, matrix, false);
-var bgDrawable = new android.graphics.drawable.BitmapDrawable(bgBitmap);
-bgDrawable.setTileModeXY(android.graphics.Shader.TileMode.REPEAT, android.graphics.Shader.TileMode.REPEAT);
-bgDrawable.setAlpha(100);
-
-
-
-
-
-
-
-
-//Info/settings menu
 function settingsMenu() {
 	if(GUI.settings.id==null) {
 		ctx.runOnUiThread(new java.lang.Runnable() {
 			run: function() {
 				try {
 					ModPE.setGameSpeed(2);
-					
-					var layout = new android.widget.LinearLayout(ctx);
-					layout.setOrientation(1);
-					var lParams = new android.widget.LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.MATCH_PARENT,android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+					var layout = Tool.New.layout(1);
+					var lParams = Tool.New.params(android.widget.LinearLayout.LayoutParams.MATCH_PARENT,android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
 					lParams.setMargins(15*dp,15*dp,15*dp,15*dp);
-					var titleLayout = new android.widget.LinearLayout(ctx);
+					
+					
+					var titleLayout = Tool.New.layout();
 					layout.addView(titleLayout,lParams);
-
 					var title = mcText("\n§eSettings & info\n",17);
 					title.setGravity(android.view.Gravity.CENTER);
 					titleLayout.addView(title);
 					var params = title.getLayoutParams();
 					params.weight = 1;
 					title.setLayoutParams(params);
-
-					var closeButton = new android.widget.ImageView(ctx);
-					closeButton.setImageBitmap(bitmaps.close_btn_np);
+					var closeButton = Tool.New.imageView(bitmaps.close_btn_np);
 					closeButton.setOnTouchListener(function(v, event) {
 						var action = event.getActionMasked();
-						if(action == android.view.MotionEvent.ACTION_CANCEL || action == android.view.MotionEvent.ACTION_UP) {
+						if(action==3||action==1)
 							closeButton.setImageBitmap(bitmaps.close_btn_np);
-						}
-						else {
+						else
 							closeButton.setImageBitmap(bitmaps.close_btn_p);
-						}
 						return false;
 					});
 					closeButton.setOnClickListener(function(viewarg) {
@@ -425,75 +416,77 @@ function settingsMenu() {
 					params.weight = 1/100000;
 					params.setMargins(15*dp,0,0,0);
 					closeButton.setLayoutParams(params);
-
 					var line = new android.view.View(ctx);
 					line.setBackgroundColor(android.graphics.Color.rgb(51,51,51));
 					layout.addView(line,lParams);
-					params = new android.widget.LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.FILL_PARENT,1*dp);
+					params = Tool.New.params(android.widget.LinearLayout.LayoutParams.FILL_PARENT,1*dp);
 					params.setMargins(15*dp,0,15*dp,0);
 					line.setLayoutParams(params);
+					
 
-					var contentLayout = new android.widget.LinearLayout(ctx);
+					var contentLayout = Tool.New.layout();
 					contentLayout.setOrientation(1);
 					var scroll = new android.widget.ScrollView(ctx);
 					scroll.addView(contentLayout);
 					layout.addView(scroll,lParams);
 
-					var sSb = new android.widget.SeekBar(ctx),sBtn;
-					sSb.setMax(60);
-					sSb.setProgress(GUI.sizeFactor+30);
+var modName = mcText("§lMomentum mod info\n",16);
+var creator = mcText("Created by: §aSin0psysS");
+var vers = mcText("Release version: §a"+rversion);
+var contact = mcText("Dev version:§a "+version);
+var sett = mcText("\n§lGeneral settings\n",16);
+
+contentLayout.addView(modName);
+contentLayout.addView(creator);
+contentLayout.addView(vers);
+contentLayout.addView(contact);
+contentLayout.addView(sett);
+
+					var sSb = Tool.New.seekBar(60,GUI.sizeFactor+30), sBtn;
 					sSb.setOnSeekBarChangeListener(new android.widget.SeekBar.OnSeekBarChangeListener() {  
 						onStopTrackingTouch: function(view) {
-							GUI.setMcText(sBtn,"Set GUI size to §a"+(sSb.getProgress()-30)+"§f\n(0 = default)")
+							Tool.setMcText(sBtn,"Set GUI size to §a"+(sSb.getProgress()-30)+"§f\n(0 = default)")
 						}
 					});
 					contentLayout.addView(sSb);
 
 					sBtn = mcButton("Set GUI size to§a "+GUI.sizeFactor+"\n§f(0 = default)");
-					sBtn.setOnClickListener(new android.view.View.OnClickListener() {
-						onClick: function(view) {
-							playSound("/click.m4a");
-							GUI.sizeFactor=sSb.getProgress()-30;
-							resize();
-							GUI.icon.id.dismiss();
-							showIcon();
-							GUI.settings.id.dismiss();
-							settingsMenu();
-						} 
+					sBtn.setOnClickListener(function(viewarg) {
+						playSound("/click.m4a");
+						GUI.sizeFactor=sSb.getProgress()-30;
+						resize();
+						GUI.icon.id.dismiss();
+						showIcon();
+						GUI.settings.id.dismiss();
+						settingsMenu();
 					});
 					contentLayout.addView(sBtn);
-
-					var dbToggle = new android.widget.Switch(ctx);
-					dbToggle.setText("Debug mode");
-					dbToggle.setTextColor(android.graphics.Color.WHITE);
-					dbToggle.setTypeface(font);
-					dbToggle.setLineSpacing(0, parseInt(GUI.size*1.15));
-					dbToggle.setTextSize(parseInt(14*GUI.size));
-					if(android.os.Build.VERSION.SDK_INT>19)
-						dbToggle.setShadowLayer(1, Math.round(dbToggle.getLineHeight() / 8), Math.round(dbToggle.getLineHeight() / 8), android.graphics.Color.parseColor("#FF333333"));
-					else
-						dbToggle.setShadowLayer(0.0001, Math.round(dbToggle.getLineHeight() / 8), Math.round(dbToggle.getLineHeight() / 8), android.graphics.Color.parseColor("#FF333333"));
-					dbToggle.setChecked(settings.debug_mode);
-					dbToggle.setOnClickListener(new android.view.View.OnClickListener( {
-						onClick: function(viewarg) {
-							if(!settings.debug_mode) {
-								settings.debug_mode=true;
-								toast("Logs are saved in the \"log_project_α\" directory.","blue");
-							}
-							else
-								settings.debug_mode=false;
-						}
-					}));
-					contentLayout.addView(dbToggle);
 					
-					GUI.settings.id = new android.widget.PopupWindow(layout, ((displayWidth*3)/8)*dp, ((displayHeight*3)/4)*dp);
-					GUI.settings.id.showAtLocation(ctx.getWindow().getDecorView(), android.view.Gravity.CENTER | android.view.Gravity.CENTER, 0, 0);
+var dbToggle = mcToggle("Debug mode",settings.debug_mode);
+					dbToggle.setOnClickListener(function(viewarg) {
+						if(!settings.debug_mode) {
+							settings.debug_mode=true;
+							toast("Logs are saved in the \"log_momentum\" directory.","blue");
+						}
+						else
+							settings.debug_mode=false;
+					});
+					contentLayout.addView(dbToggle);
+
+var auToggle = mcToggle("Use mobile network to update",!settings.wifi_only);
+					auToggle.setOnClickListener(function(viewarg) {
+						if(!settings.wifi_only) {
+							settings.wifi_only=true;
+						}
+						else
+							settings.wifi_only=false;
+					});
+					contentLayout.addView(auToggle);
+
+					GUI.settings.id = Tool.New.popupWindow(layout, ((displayWidth*3)/8)*dp, ((displayHeight*3)/4)*dp, ctx.getWindow().getDecorView(), android.view.Gravity.CENTER, android.view.Gravity.CENTER, 0, 0);
 					layout.setBackgroundDrawable(bitmaps.bg_settings);
-					var wm = ctx.getSystemService(ctx.WINDOW_SERVICE),
-					params = layout.getLayoutParams();
-					params.flags = android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-					params.dimAmount = 0.5;
-					wm.updateViewLayout(layout,params);
+					Tool.dimView(layout,0.5);
+					
 					GUI.settings.id.setOnDismissListener(function() {
 						GUI.settings.id = null;
 						ModPE.setGameSpeed(20);
@@ -507,21 +500,19 @@ function settingsMenu() {
 	}
 }
 
-//main menu
 function showMainMenu() {
 	if(GUI.main.id==null) {
 		ModPE.setGameSpeed(2);
 		ctx.runOnUiThread(new java.lang.Runnable() {
 			run: function() {
 				try {
-					var layout = new android.widget.LinearLayout(ctx);
-					layout.setOrientation(1);
-					var layoutParams = new android.widget.LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.MATCH_PARENT,android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
-					layoutParams.setMargins(0,15*dp,15*dp,15*dp);//((displayWidth/2)+40)*(dp/7)+(15*dp)
-					var upperLayout = new android.widget.LinearLayout(ctx);
-					var titleLayout = new android.widget.LinearLayout(ctx);
-					layout.addView(titleLayout,layoutParams);
+					var layout = Tool.New.layout(1);
+					var layoutParams = Tool.New.params(android.widget.LinearLayout.LayoutParams.MATCH_PARENT,android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+					layoutParams.setMargins(0,15*dp,15*dp,15*dp);
+					var upperLayout = Tool.New.layout();
 					
+					var titleLayout = Tool.New.layout();
+					layout.addView(titleLayout,layoutParams);
 					var title = mcText("\nInventory Tweaks.\n",17);
 					title.setGravity(android.view.Gravity.CENTER);
 					title.setTextColor(android.graphics.Color.YELLOW);
@@ -529,9 +520,7 @@ function showMainMenu() {
 					var params = title.getLayoutParams();
 					params.weight = 1;
 					title.setLayoutParams(params);
-
-					var settingsButton = new android.widget.ImageView(ctx);
-					settingsButton.setImageBitmap(bitmaps.settings_icon);
+					var settingsButton = Tool.New.imageView(bitmaps.settings_icon);
 					settingsButton.setOnTouchListener(function(v, event) {
 						var action = event.getActionMasked();
 						if(action == android.view.MotionEvent.ACTION_CANCEL || action == android.view.MotionEvent.ACTION_UP) {
@@ -552,9 +541,7 @@ function showMainMenu() {
 					params.weight = 1/100000;
 					params.setMargins(15*dp,0,0,0);
 					settingsButton.setLayoutParams(params);
-
-					var closeButton = new android.widget.ImageView(ctx);
-					closeButton.setImageBitmap(bitmaps.close_btn_np);
+					var closeButton = Tool.New.imageView(bitmaps.close_btn_np);
 					closeButton.setOnTouchListener(function(v, event) {
 						var action = event.getActionMasked();
 						if(action == android.view.MotionEvent.ACTION_CANCEL || action == android.view.MotionEvent.ACTION_UP) {
@@ -579,8 +566,8 @@ function showMainMenu() {
 					var line = new android.view.View(ctx);
 					line.setBackgroundColor(android.graphics.Color.rgb(51,51,51));
 					layout.addView(line);
-					params = new android.widget.LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.FILL_PARENT,1*dp);
-					params.setMargins(0,0,15*dp,0);//(60*dp,0,10*dp,0);
+					params = Tool.New.params(android.widget.LinearLayout.LayoutParams.FILL_PARENT,1*dp);
+					params.setMargins(0,0,15*dp,0);
 					line.setLayoutParams(params);
 
 					//Tabs
@@ -756,7 +743,7 @@ contentLayout.addView(txt_1);
 							else {
 							settings.smart_tools="off";
 							}
-						GUI.setMcText(smButton,"Auto switch is §a"+settings.smart_tools);
+						Tool.setMcText(smButton,"Auto switch is §a"+settings.smart_tools);
 						}
 					});
 					contentLayout.addView(smButton);
@@ -774,7 +761,7 @@ contentLayout.addView(txt_1);
 							else {
 								settings.destacking="off";
 							}
-							GUI.setMcText(dsButton,"No stack limit mode is §a"+settings.destacking);
+							Tool.setMcText(dsButton,"No stack limit mode is §a"+settings.destacking);
 						}
 					});
 					contentLayout.addView(dsButton);
@@ -818,7 +805,7 @@ contentLayout.addView(txt_1);
 					sb.setOnSeekBarChangeListener(new android.widget.SeekBar.OnSeekBarChangeListener() {  
 						onStopTrackingTouch: function(view) {
 							sbProgress=sb.getProgress();
-							GUI.setMcText(text,"\nTime Speed : §a"+Math.floor(sb.getProgress()+1)+"§f\n(Regular speed = 20)");
+							Tool.setMcText(text,"\nTime Speed : §a"+Math.floor(sb.getProgress()+1)+"§f\n(Regular speed = 20)");
 						}  
 					});
 					contentLayout2.addView(sb);
@@ -831,7 +818,7 @@ contentLayout.addView(txt_1);
 					sb2.setProgress(9);
 					sb2.setOnSeekBarChangeListener(new android.widget.SeekBar.OnSeekBarChangeListener() {  
 						onStopTrackingTouch: function(view) {
-							GUI.setMcText(text2,"Time jump :\nGo back§a "+Math.floor(sb2.getProgress()+1)+" §fseconds ago")
+							Tool.setMcText(text2,"Time jump :\nGo back§a "+Math.floor(sb2.getProgress()+1)+" §fseconds ago")
 						}
 					});
 					contentLayout2.addView(sb2);
@@ -888,7 +875,7 @@ Level.setTime(past_data[sb2.getProgress()+1][1][2]);
 					toggle.setText("Display IRL time played");
 					toggle.setTextColor(android.graphics.Color.WHITE);
 					toggle.setTypeface(font);
-					toggle.setLineSpacing(0, parseInt(GUI.size*1.15));
+					toggle.setLineSpacing(0, 1.15);
 toggle.setTextSize(parseInt(14*GUI.size));
 					if(android.os.Build.VERSION.SDK_INT>19)
 						toggle.setShadowLayer(1, Math.round(toggle.getLineHeight() / 8), Math.round(toggle.getLineHeight() / 8), android.graphics.Color.parseColor("#FF333333"));
@@ -917,7 +904,7 @@ toggle.setTextSize(parseInt(14*GUI.size));
 					toggle1.setText("Display Minecraft time");
 					toggle1.setTextColor(android.graphics.Color.WHITE);
 					toggle1.setTypeface(font);
-					toggle1.setLineSpacing(0, parseInt(GUI.size*1.15));
+					toggle1.setLineSpacing(0, 1.15);
 toggle1.setTextSize(parseInt(14*GUI.size));
 					if(android.os.Build.VERSION.SDK_INT>19)
 						toggle1.setShadowLayer(1, Math.round(toggle1.getLineHeight() / 8), Math.round(toggle1.getLineHeight() / 8), android.graphics.Color.parseColor("#FF333333"));
@@ -1029,7 +1016,16 @@ mainButton.setLayoutParams(params);
 	});
 }
 
-//Practically untouched Inventory Tweaks mod r16 dev030
+//Practically untouched Inventory Tweaks mod r16 dev030 + Upgraded time control features
+
+//IT dev30 B64
+var bgBase="iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAfxJREFUOI1dkr9r20AYhh87LjjEP6R2kNoi6qh0LBH2VjCITl48dikZ/G90y5K/KFOGgou7FYLloVDI2QJBTqKtpLp2bApGHcwdsm86fd+d3nuf763cXl8WQqYAREkOgO+5HNfCOKNjm7o/ns7xPZcT51njqt2oMwkWGI1TAHZFwZ+Xfb59/YLROMX3XJpndZbrrf75TEim95LK7fVlMZ7Otcpo0EN9l9XUCuMMQJ+rCpny1+riey4d20TIVB9Sao5lAOBYBh3bZDToaYtVgGZyh5ApvucyCRb0L84BtPIkWADwHRcAIVNdq0VJThhnOJaBkKkGpV5Rhvc7+EzTNomSnI5t4nvuIQOAVnfI8u5GW1AvKe8dyyBKchzL2E9BHe7YJo8PP2g39sTDOGNXFMyEpHlWJ1ttWK63LNdbzaWqNuPpHCFTPXf1/CjJNZNybxIsiJJ8z8CxDA2lDE15L188tlJVDQVFWRkNejiWQRhnuh7GGUKmCJnS6g6JkpyTj+/fXimFXVGQrTZ037xgPJ3TbtRZ2z1qqwey1YZqpcJMSF7ZJj/vZ4RxRuXTh3dFGGf0L841WYDXz58eJPB4KStVQF8GmP/6R5TkBwlUNo4TKmS6n4IKk++5PNk9avqTYIHvuTr3xwkFqKmNyrdSbXWHdO5udObVNFRfif4HjC8/LkSmx2oAAAAASUVORK5CYII=";
+var matrix = new android.graphics.Matrix();
+matrix.postScale(16,16);
+var bgBitmap = new android.graphics.Bitmap.createBitmap(android.graphics.BitmapFactory.decodeByteArray(android.util.Base64.decode(bgBase, 0), 0, android.util.Base64.decode(bgBase, 0).length), 0, 0, 16, 16, matrix, false);
+var bgDrawable = new android.graphics.drawable.BitmapDrawable(bgBitmap);
+bgDrawable.setTileModeXY(android.graphics.Shader.TileMode.REPEAT, android.graphics.Shader.TileMode.REPEAT);
+bgDrawable.setAlpha(100);
 
 var GUIcr,GUIb,GUIop,GUIc,GUIup,GUInt;
 //game data variables
@@ -1057,11 +1053,12 @@ var order = [276,278,279,277,293, //dia tools
 261,262,359,259,46,346,345,347, //bow, arrows, shears, flint and steel & tnt, fishing rod, compass, clock
 [325,0],[325,1],[325,8],[325,10], //buckets
 50, //torches
-310,311,312,313,306,307,308,309,302,303,304,305,314,315,316,317,298,299,300,301, //armor
 322,354,364,320,297,366,393,400,[350,0],[350,1],357,360,391,260,282,459, //ready-to eat food
 58,54,61,62,355,245,116,117,379,145,247, //workbench, chests...
 
 374,373,438,403,384,376,377,378,382,396, //enchantments, potions
+
+310,311,312,313,306,307,308,309,302,303,304,305,314,315,316,317,298,299,300,301, //armor
 
 57,42,41,152,22,[155,0],[155,1],[155,2],173, //full ores blocks
 264,265,266,388,406,331,348,[263,0],[263,1],318,337, //ores/mining
@@ -1109,7 +1106,7 @@ if(activeNetwork!=null&&activeNetwork.isConnectedOrConnecting()) {
 		if(Number(versionInfo[1])>version) {
 			ctx.runOnUiThread(new java.lang.Runnable() {
 				run: function() {
-					pd = android.app.ProgressDialog.show(ctx,"Project Alpha","Downloading update data, please wait...");
+					pd = android.app.ProgressDialog.show(ctx,"Momentum","Downloading update data, please wait...");
 				}
 			});
 			newCode=loadTxtFromUrl("https://raw.githubusercontent.com/Sin0psysS/ModPE/master/pa_lastVersion");
@@ -1235,13 +1232,13 @@ GUI.icon.id=null;
 
 function helpMsg(page) {
 if(page=="3") {
-clientMessage("§l§8[Project Alpha] §r§o§7 Help page 3 of 3\n§7> Smart tools mode will place the right tool in your hand when you start breaking a block (if you have it), and even craft it for you if you feel lazy.\n§7> Time travel sets your position, health, and game time back to how they were up to 40 seconds ago.\n§7> No stack limits mode allows similar items to regroup when sorting the inventory, and thus uses less slots.\n\n§7§oContact §8@Sin0psysS§7 to report any bug or problem encountered!\n§lEnjoy the mod!");
+clientMessage("§l§8[Momentum] §r§o§7 Help page 3 of 3\n§7> Smart tools mode will place the right tool in your hand when you start breaking a block (if you have it), and even craft it for you if you feel lazy.\n§7> Time travel sets your position, health, and game time back to how they were up to 40 seconds ago.\n§7> No stack limits mode allows similar items to regroup when sorting the inventory, and thus uses less slots.\n\n§7§oContact §8@Sin0psysS§7 to report any bug or problem encountered!\n§lEnjoy the mod!");
 }
 	else if(page=="2"){
-		clientMessage("§l§8[Project Alpha] §r§o§7 Help page 2 of 3\n§7> §f§o/sort inv§7 to sort your inventory ;\n§7> §f§o/sort chest§7 (then hit a regular chest)§7 to sort a small chest ;\n§7> §f§o/sort large chest§7 (then hit a large chest)§7 to sort a large chest.\n§7> §oInfo about the features is on page 3.")
+		clientMessage("§l§8[Momentum] §r§o§7 Help page 2 of 3\n§7> §f§o/sort inv§7 to sort your inventory ;\n§7> §f§o/sort chest§7 (then hit a regular chest)§7 to sort a small chest ;\n§7> §f§o/sort large chest§7 (then hit a large chest)§7 to sort a large chest.\n§7> §oInfo about the features is on page 3.")
 	}
 	else {
-		clientMessage("§l§8[Project Alpha] §r§o§7 A little help there ? - page 1 of 3\n§7> §fCommands additionnal to the§o GUI§r :\n§7> §f§o/delete data to reset preferences\n§7> §f§o/showgui §7/§f /hidegui§7 to hide or display the button\n§7> §oManual triggers for the Inventory Tweaks are on next page.");
+		clientMessage("§l§8[Momentum] §r§o§7 A little help there ? - page 1 of 3\n§7> §fCommands additionnal to the§o GUI§r :\n§7> §f§o/delete data to reset preferences\n§7> §f§o/showgui §7/§f /hidegui§7 to hide or display the button\n§7> §oManual triggers for the Inventory Tweaks are on next page.");
 	}
 }
 
@@ -1442,7 +1439,7 @@ function add(item,isChest) {
 	var count2=item[2];
 	if(isChest==null) {
 		if(settings.destacking=="on") {
-			if(count2-255>=0)	{
+			if(count2-255>0)	{
 				inventory.push([item[0],item[1],255]);
 				item[2]-=255;
 				add(item);
@@ -2067,7 +2064,7 @@ function updateTo(info) {
 
 				var txt_0 = new android.widget.TextView(ctx);
 				txt_0.setGravity(android.view.Gravity.CENTER);
-				txt_0.setText("\nProject Alpha     \n");
+				txt_0.setText("\nMomentum     \n");
 				txt_0.setTextColor(android.graphics.Color.YELLOW);
 				txt_0.setTypeface(font);
 				txt_0.setTextSize(17);
@@ -2142,7 +2139,7 @@ layout.startAnimation(show);
 function rewriteMod() {
 	try {
 		toast("Successfully updated the mod!");
-		var mod=java.io.File(ctx.getDir("modscripts",0)+"/project_α.js");
+		var mod=java.io.File(ctx.getDir("modscripts",0)+"/momentum.js");
 		if(mod.exists()) {
 			mod.delete;
 			mod.createNewFile();
@@ -2183,7 +2180,7 @@ function networkPreferencesGUI() {
 
 				var txt_0 = new android.widget.TextView(ctx);
 				txt_0.setGravity(android.view.Gravity.CENTER);
-				txt_0.setText("\nProject Alpha     \n");
+				txt_0.setText("\nMomentum     \n");
 				txt_0.setTextColor(android.graphics.Color.YELLOW);
 				txt_0.setTypeface(font);
 				txt_0.setTextSize(17);
@@ -2203,15 +2200,15 @@ function networkPreferencesGUI() {
 				yesButton.setOnClickListener(new android.view.View.OnClickListener() {
 					onClick: function(viewarg) {
 						settings.wifi_only=true;
-						toast("Settings changed! Type '/delete data' in-game to reset them.");
 						GUInt.dismiss();
-						var ff=java.io.File(ctx.getDir("modscripts",0)+"/inventory_tweaks.js");
+						var ff=java.io.File(ctx.getDir("modscripts",0)+"/momentum.js");
 						if(ff.exists()) {
 							leaveGame();
 							net.zhuoweizhang.mcpelauncher.ScriptManager.setEnabled(ff, true);
 						}
 						else {
-							toast("Reload the mod now to check for updates.");
+							toast("Updates will be checked next time you load the mod.","red");toast("Updates will be checked next time you load the mod.","red");
+toast("Updates will be checked next time you load the mod.","red");
 						}
 					}
 				});
@@ -2220,15 +2217,15 @@ function networkPreferencesGUI() {
 				var noButton=mcButton("No, use wifi and mobile!");
 				noButton.setOnClickListener(new android.view.View.OnClickListener() {
 					onClick: function(viewarg) {
-						toast("Settings saved! Type '/delete data' in-game to reset them.");
 						GUInt.dismiss();
-						var ff=java.io.File(ctx.getDir("modscripts",0)+"/inventory_tweaks.js");
+						var ff=java.io.File(ctx.getDir("modscripts",0)+"/momentum.js");
 						if(ff.exists()) {
 							leaveGame();
 							net.zhuoweizhang.mcpelauncher.ScriptManager.setEnabled(ff, true);
 						}
 						else {
-							toast("Reload the mod now to check for updates.");
+							toast("Updates will be checked next time you load the mod.","red");toast("Updates will be checked next time you load the mod.","red");
+toast("Updates will be checked next time you load the mod.","red");
 						}
 					}
 				});
@@ -2261,10 +2258,10 @@ function toast(msg,color) {
 	ctx.runOnUiThread(new java.lang.Runnable() {
 		run: function(){
 			if(color==undefined) {
-				android.widget.Toast.makeText(ctx, new android.text.Html.fromHtml("<b>[Project Alpha]</b> "+msg), 0).show();
+				android.widget.Toast.makeText(ctx, new android.text.Html.fromHtml("<b>[Momentum]</b> "+msg), 0).show();
 			}
 			else {
-				android.widget.Toast.makeText(ctx, new android.text.Html.fromHtml("<b>[Project Alpha]</b> <font color=\""+color+"\"> "+msg), 0).show();
+				android.widget.Toast.makeText(ctx, new android.text.Html.fromHtml("<b>[Momentum]</b> <font color=\""+color+"\"> "+msg), 0).show();
 			}
 		}
 	});
