@@ -280,7 +280,6 @@ function getInvSaves(isCommon,worldPath) {
 		}
 		bufferedReader.close();
 		dat = new String(dat);
-print(dat);
 		dat = dat.split("\n");
 dat.pop();
 		for(var o in dat) {
