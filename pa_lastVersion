@@ -1,10 +1,10 @@
-/*####### release 1.0, build 009  #######
+/*####### release 1.1, build 010  #######
 ############## MOMENTUM ##############
 ############# by Sin0psysS ############
 #######################################*/
 
 
-var version = 009,rversion=1;
+var version = 10,rversion=1.1;
 
 var ctx = com.mojang.minecraftpe.MainActivity.currentMainActivity.get(),
 activeNetwork = ctx.getSystemService(ctx.CONNECTIVITY_SERVICE).getActiveNetworkInfo(),
@@ -93,7 +93,8 @@ var settings = {
 	smart_tools:"on",
 	destacking:"off",
 	wifi_only:false,
-	debug_mode:false
+	debug_mode:false,
+	common_saves:true
 }
 
 //debug mode
@@ -134,7 +135,7 @@ var log = {
 };
 
 //others
-var sb,dp,dead = 0,timer = 0,loop = 20,sdisp = false,sdisp2 = false,dpos,past_data = [];
+var sb,dp,dead = 0,timer = 0,loop = 20,sdisp = false,sdisp2 = false,dpos=[null,null,null,0],past_data = [];
 
 //Sound file
 var play=new android.media.MediaPlayer();
@@ -225,7 +226,7 @@ else {
 	bufferedReader.close();
 	main = new String(main);
 	main = main.split(":");
-	for(var i=1;i<9;i++) {
+	for(var i=1;i<10;i++) {
 		main[i]=main[i].split("\n");
 	}
 	//main[1] = main[1].split("\n"),main[2] = main[2].split("\n"),main[3] = main[3].split("\n"),main[4] = main[4].split("\n"),main[5] = main[5].split("\n"),main[6] = main[6].split("\n"),main[7] = main[7].split("\n"),main[8] = main[8].split("\n");
@@ -252,11 +253,79 @@ checkForUpdate();
 		sdisp2=true;
 	else
 		sdisp2=false;
-	if(main.length>9) {
-		main[9]=main[9].split("\n");
-		GUI.sizeFactor=parseFloat(main[9][0]);
-		resize();
+	GUI.sizeFactor=parseFloat(main[9][0]);
+	resize();
+	if(main.length>10) {
+		main[10]=main[10].split("\n");
+		if(main[10][0]=="true")
+			settings.common_saves=true;
+		else
+			settings.common_saves=false;
 	}
+}
+
+var inventory_saves=[[null],[null],[null],[null]];
+function getInvSaves(isCommon,worldPath) {
+	var invFile;
+	if(isCommon) {
+		invFile = java.io.File(path+"/common_inventory_saves.dat");
+	}
+	else {
+		invFile = java.io.File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath()+"/games/com.mojang/minecraftWorlds/"+worldPath+"/inventory_saves.dat");
+	}
+	if(invFile.exists()) {
+			var streamInput = new java.io.FileInputStream(invFile),bufferedReader= new java.io.BufferedReader(new java.io.InputStreamReader(streamInput)),dat="";
+		while((row=bufferedReader.readLine())!=null) {
+			dat+=row+"\n";
+		}
+		bufferedReader.close();
+		dat = new String(dat);
+print(dat);
+		dat = dat.split("\n");
+dat.pop();
+		for(var o in dat) {
+			if(dat[o]=="null") {
+				dat[o] = [null];
+			}
+			else {
+			dat[o] = dat[o].split(";");
+			for(var p in dat[o]) {
+				dat[o][p] = dat[o][p].split(",");
+			}
+			}
+		}
+		inventory_saves = dat;
+	}
+	else
+		inventory_saves=[[null],[null],[null],[null]];
+}
+
+function saveInvData(shouldCommon) {
+		var invSaves;
+	if(shouldCommon) {
+		invSaves = java.io.File(path+"/common_inventory_saves.dat");
+	}
+	else {
+		invSaves = java.io.File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath()+"/games/com.mojang/minecraftWorlds/"+Level.getWorldDir()+"/inventory_saves.dat");
+	}
+	if(invSaves.exists())
+	invSaves.delete();
+	invSaves.createNewFile();
+	for(var m in inventory_saves) {
+		if(inventory_saves[m].length==1) {
+			inventory_saves[m]="null";
+		}
+		else {
+		for(var n in inventory_saves[m]) {
+			inventory_saves[m][n] = inventory_saves[m][n].join(",");
+		}
+		inventory_saves[m] = inventory_saves[m].join(";");
+		}
+	}
+	var content = new String(inventory_saves.join("\n"));
+	var printWriter = new java.io.PrintWriter(invSaves);
+	printWriter.print(content);
+	printWriter.close();
 }
 
 var Tool = {
@@ -434,12 +503,14 @@ var modName = mcText("§lMomentum mod info\n",16);
 var creator = mcText("Created by: §aSin0psysS");
 var vers = mcText("Release version: §a"+rversion);
 var contact = mcText("Dev version:§a "+version);
+var warning=mcText("\n§4/!\\§7- do not use sorting in the chest GUI\n- do not click double chest to sort a single chest\n- Sorting and auto switch may remove enchantments (will be fixed)\nReport any bug you find!",10);
 var sett = mcText("\n§lGeneral settings\n",16);
 
 contentLayout.addView(modName);
 contentLayout.addView(creator);
 contentLayout.addView(vers);
 contentLayout.addView(contact);
+contentLayout.addView(warning);
 contentLayout.addView(sett);
 
 					var sSb = Tool.New.seekBar(60,GUI.sizeFactor+30), sBtn;
@@ -482,6 +553,21 @@ var auToggle = mcToggle("Use mobile network to update",!settings.wifi_only);
 							settings.wifi_only=false;
 					});
 					contentLayout.addView(auToggle);
+					
+					var isToggle = mcToggle("Use common inventory saves for all worlds",settings.common_saves);
+					isToggle.setOnClickListener(function(viewarg) {
+						if(settings.common_saves) {
+							leaveGame();
+							settings.common_saves = false;
+							newLevel();
+						}
+						else {
+							leaveGame();
+							settings.common_saves = true;
+							newLevel();
+						}
+					});
+					contentLayout.addView(isToggle);
 
 					GUI.settings.id = Tool.New.popupWindow(layout, ((displayWidth*3)/8)*dp, ((displayHeight*3)/4)*dp, ctx.getWindow().getDecorView(), android.view.Gravity.CENTER, android.view.Gravity.CENTER, 0, 0);
 					layout.setBackgroundDrawable(bitmaps.bg_settings);
@@ -489,7 +575,7 @@ var auToggle = mcToggle("Use mobile network to update",!settings.wifi_only);
 					
 					GUI.settings.id.setOnDismissListener(function() {
 						GUI.settings.id = null;
-						ModPE.setGameSpeed(20);
+						showMainMenu();
 					});
 				}
 				catch(e) {
@@ -681,15 +767,13 @@ tab2.setColorFilter(android.graphics.Color.rgb(123,123,123),android.graphics.Por
 
 					
 					//inventory Tweaks content
-					var txt_1 = mcText("§lClick to sort :");
+					var txt_1 = mcText("§lInstant Sorting\n");
 					contentLayout.addView(txt_1);
-txt_1=mcText("Your inventory, chest or double chest\n\n");
-contentLayout.addView(txt_1);
 	
 					var l2 = new android.widget.LinearLayout(ctx);
 					l2.setOrientation(android.widget.LinearLayout.HORIZONTAL);
 					contentLayout.addView(l2);
-					var btn = mcButton("I");
+					var btn = mcButton("Inventory");
 					btn.setOnClickListener(new android.view.View.OnClickListener() {
 						onClick: function(view) {
 							playSound("/click.m4a");
@@ -698,9 +782,9 @@ contentLayout.addView(txt_1);
 							sort();
 						}  
 					});
-					l2.addView(btn);
+					contentLayout.addView(btn);
 
-					var btn = mcButton("C");
+					var btn = mcButton("Simple chest");
 					btn.setOnClickListener(new android.view.View.OnClickListener() {
 						onClick: function(view) {
 							playSound("/click.m4a");
@@ -710,24 +794,171 @@ contentLayout.addView(txt_1);
 							show=[80,"Now hit a normal chest to sort it!"];
 						}  
 					});
-					l2.addView(btn);
+					contentLayout.addView(btn);
 
-					var btn = mcButton("2C");
+					var btn = mcButton("Double chest");
 					btn.setOnClickListener(new android.view.View.OnClickListener() {
 						onClick: function(view) {
 							playSound("/click.m4a");
 							GUI.main.id.dismiss();
 							ModPE.setGameSpeed(sb.getProgress()+1);
 							slotAmount=53;
-							show=[80,"Now hit a large chest to sort it!"];
+							show=[80,"Now hit a §4large§f chest to sort it!"];
 						}  
 					});
-					l2.addView(btn);
+					contentLayout.addView(btn);
 
-					var txt_2=mcText("\n\nSettings\n\n");
+var subtitle = mcText("\n§lInventory Saves\n");
+					contentLayout.addView(subtitle);
+
+var clr=mcButton("Clear Inventory");
+clr.setOnClickListener(new android.view.View.OnClickListener() {
+						onClick: function(viewarg) {
+playSound("/click.m4a");
+							for(var i=9;i<=256;i++){
+Player.clearInventorySlot(i);
+}
+						}
+					});
+contentLayout.addView(clr);
+
+var bname="Inventory Save #1";
+if(inventory_saves[0].length==1)
+bname="Long click to save your inventory!";
+var is1=mcButton(bname);
+is1.setOnClickListener(new android.view.View.OnClickListener() {
+						onClick: function(viewarg) {
+playSound("/click.m4a");
+							GUI.main.id.dismiss();
+							ModPE.setGameSpeed(sb.getProgress()+1);
+							if(inventory_saves[0].length!=1) {
+for(var i=9;i<=256;i++){
+Player.clearInventorySlot(i);
+}
+for(var i in inventory_saves[0]) {
+addItemInventory(inventory_saves[0][i][0],inventory_saves[0][i][1],inventory_saves[0][i][2]);
+}
+show=[80,"Restored inventory save #1!"];
+}
+else
+show=[80,"This inventory save is empty!"];
+						}
+					});
+is1.setOnLongClickListener(function(v,t) {
+					ctx.getSystemService(android.content.Context.VIBRATOR_SERVICE).vibrate(37);
+					inventory_saves[0]=[];
+for(var i=9;i<=44;i++){
+inventory_saves[0].push([Player.getInventorySlot(i),Player.getInventorySlotCount(i),Player.getInventorySlotData(i)]);
+}
+Tool.setMcText(is1,"Inventory Save #1");
+return true;
+				});
+contentLayout.addView(is1);
+
+bname="Inventory Save #2";
+if(inventory_saves[1].length==1)
+bname="Long click to save your inventory!";
+var is2=mcButton(bname);
+is2.setOnClickListener(new android.view.View.OnClickListener() {
+						onClick: function(viewarg) {
+playSound("/click.m4a");
+							GUI.main.id.dismiss();
+							ModPE.setGameSpeed(sb.getProgress()+1);
+							if(inventory_saves[1].length!=1) {
+for(var i=9;i<=256;i++){
+Player.clearInventorySlot(i);
+}
+for(var i in inventory_saves[1]) {
+addItemInventory(inventory_saves[1][i][0],inventory_saves[1][i][1],inventory_saves[1][i][2]);
+}
+show=[80,"Restored inventory save #2!"];
+}
+else
+show=[80,"This inventory save is empty!"];
+						}
+					});
+is2.setOnLongClickListener(function(v,t) {
+					ctx.getSystemService(android.content.Context.VIBRATOR_SERVICE).vibrate(37);
+					inventory_saves[1]=[];
+for(var i=9;i<=44;i++){
+inventory_saves[1].push([Player.getInventorySlot(i),Player.getInventorySlotCount(i),Player.getInventorySlotData(i)]);
+}
+Tool.setMcText(is2,"Inventory Save #2");
+return true;
+				});
+contentLayout.addView(is2);
+
+bname="Inventory Save #3";
+if(inventory_saves[2].length==1)
+bname="Long click to save your inventory!";
+var is3=mcButton(bname);
+is3.setOnClickListener(new android.view.View.OnClickListener() {
+						onClick: function(viewarg) {
+playSound("/click.m4a");
+							GUI.main.id.dismiss();
+							ModPE.setGameSpeed(sb.getProgress()+1);
+							if(inventory_saves[2].length!=1) {
+for(var i=9;i<=256;i++){
+Player.clearInventorySlot(i);
+}
+for(var i in inventory_saves[2]) {
+addItemInventory(inventory_saves[2][i][0],inventory_saves[2][i][1],inventory_saves[2][i][2]);
+}
+show=[80,"Restored inventory save #3!"];
+}
+else
+show=[80,"This inventory save is empty!"];
+						}
+					});
+is3.setOnLongClickListener(function(v,t) {
+					ctx.getSystemService(android.content.Context.VIBRATOR_SERVICE).vibrate(37);
+					inventory_saves[2]=[];
+for(var i=9;i<=44;i++){
+inventory_saves[2].push([Player.getInventorySlot(i),Player.getInventorySlotCount(i),Player.getInventorySlotData(i)]);
+}
+Tool.setMcText(is3,"Inventory Save #3");
+return true;
+				});
+contentLayout.addView(is3);
+
+bname="Inventory Save #4";
+if(inventory_saves[3].length==1)
+bname="Long click to save your inventory!";
+var is4=mcButton(bname);
+is4.setOnClickListener(new android.view.View.OnClickListener() {
+						onClick: function(viewarg) {
+playSound("/click.m4a");
+							GUI.main.id.dismiss();
+							ModPE.setGameSpeed(sb.getProgress()+1);
+							if(inventory_saves[3].length!=1) {
+for(var i=9;i<=256;i++){
+Player.clearInventorySlot(i);
+}
+for(var i in inventory_saves[3]) {
+addItemInventory(inventory_saves[3][i][0],inventory_saves[3][i][1],inventory_saves[3][i][2]);
+}
+show=[80,"Restored inventory save #4!"];
+}
+else
+show=[80,"This inventory save is empty!"];
+						}
+					});
+is4.setOnLongClickListener(function(v,t) {
+					ctx.getSystemService(android.content.Context.VIBRATOR_SERVICE).vibrate(37);
+					inventory_saves[3]=[];
+for(var i=9;i<=44;i++){
+inventory_saves[3].push([Player.getInventorySlot(i),Player.getInventorySlotCount(i),Player.getInventorySlotData(i)]);
+}
+Tool.setMcText(is4,"Inventory Save #4");
+return true;
+				});
+contentLayout.addView(is4);
+
+
+					var txt_2=mcText("\n\n§eSettings\n\n",17);
 					txt_2.setGravity(android.view.Gravity.CENTER);
-					txt_2.setTextColor(android.graphics.Color.YELLOW);
-					txt_2.setTextSize(parseInt(GUI.size*17));
+					//txt_2.setTextColor(android.graphics.Color.YELLOW);
+					//txt_2.setTextSize(parseInt(GUI.size*17));
 					contentLayout.addView(txt_2);
 
 					var txt_3=mcText("§lSmart Tools mode\n");
@@ -779,6 +1010,10 @@ contentLayout.addView(txt_1);
 
 					
 					//Time Control content
+
+var subTitle = mcText("§lTime Editing\n");
+					contentLayout2.addView(subTitle);
+
 					var btn = mcButton("Set time to §anight");
 					btn.setOnClickListener(new android.view.View.OnClickListener() {
 						onClick: function(view) {
@@ -810,7 +1045,10 @@ contentLayout.addView(txt_1);
 					});
 					contentLayout2.addView(sb);
 
-					var text2 = mcText("Travel backwards in time\nGo back §a10§f seconds ago");
+var subTitle = mcText("\n§lTime Travel\n");
+					contentLayout2.addView(subTitle);
+
+					var text2 = mcText("Time jump\nGo back §a10§f seconds ago");
 					contentLayout2.addView(text2);
 
 					sb2 = new android.widget.SeekBar(ctx);
@@ -870,6 +1108,8 @@ Level.setTime(past_data[sb2.getProgress()+1][1][2]);
 					});
 					contentLayout2.addView(btn);
 
+var subTitle = mcText("\n§lMomentum digital clock\n");
+					contentLayout2.addView(subTitle);
 
 					var toggle = new android.widget.Switch(ctx);
 					toggle.setText("Display IRL time played");
@@ -1103,7 +1343,7 @@ function checkForUpdate(){
 if(activeNetwork!=null&&activeNetwork.isConnectedOrConnecting()) {
 	if(settings.wifi_only&&activeNetwork.getType()==1||!settings.wifi_only) {
 		var versionInfo=loadTxtFromUrl("https://raw.githubusercontent.com/Sin0psysS/ModPE/master/pa_versionInfo").split(" ; ");
-		if(Number(versionInfo[1])>version) {
+if(parseInt(versionInfo[1])>version) {
 			ctx.runOnUiThread(new java.lang.Runnable() {
 				run: function() {
 					pd = android.app.ProgressDialog.show(ctx,"Momentum","Downloading update data, please wait...");
@@ -1127,18 +1367,21 @@ timer=0;
 		deleteGUInt();
 	//icon
 	showIcon();
+	getInvSaves(settings.common_saves,Level.getWorldDir());
 }
 
 function leaveGame() {
 	//saving data
-	var dataFile = java.io.File(path+"/data.txt");
-	if(dataFile.exists())
-		dataFile.delete();
-	dataFile.createNewFile();
-	var content = new String("smart_tools:"+settings.smart_tools+"\ndestacking:"+settings.destacking+"\nbutton_x:"+buttonX+"\nbutton_y:"+buttonY+"\nwifi_only:"+settings.wifi_only+"\ndebug:"+settings.debug_mode+"\nchrono:"+sdisp+"\nmctime:"+sdisp2+"\ngui_size:"+GUI.sizeFactor);
-	var printWriter = new java.io.PrintWriter(dataFile);
+	var cmnInvFile = java.io.File(path+"/data.txt");
+	if(cmnInvFile.exists())
+		cmnInvFile.delete();
+	cmnInvFile.createNewFile();
+	var content = new String("smart_tools:"+settings.smart_tools+"\ndestacking:"+settings.destacking+"\nbutton_x:"+buttonX+"\nbutton_y:"+buttonY+"\nwifi_only:"+settings.wifi_only+"\ndebug:"+settings.debug_mode+"\nchrono:"+sdisp+"\nmctime:"+sdisp2+"\ngui_size:"+GUI.sizeFactor+"\ncommon_saves:"+settings.common_saves);
+	var printWriter = new java.io.PrintWriter(cmnInvFile);
 	printWriter.print(content);
 	printWriter.close();
+	
+saveInvData(settings.common_saves);
 
 		ctx.runOnUiThread(new java.lang.Runnable() {
 		run: function() {
@@ -1166,6 +1409,10 @@ function useItem(x,y,z,i,b) {
 		sortChest(x,y,z,slotAmount);
 		slotAmount=0;
 	}
+else if(slotAmount!=0&&getTile(x,y,z)!=54) {
+slotAmount=0;
+show=[80,"Uhm, this is no chest! Please try again!"];
+}
 	if(b==46&&i!=46) {
 		correctTool(i,b,false);
 	}
@@ -1219,7 +1466,7 @@ GUI.icon.id=null;
 		}
 		else if(c[1]=="largechest"||c[1]=="large"&&c[2]=="chest") {
 			slotAmount=53;
-			show=[80,"Now hit a large chest to sort it!"];
+			show=[80,"Now hit a §4large§f chest to sort it!"];
 		}
 		else if(c[1]=="inv"||c[1]=="inventory") {
 			sort();
@@ -1247,11 +1494,15 @@ clientMessage("§l§8[Momentum] §r§o§7 Help page 3 of 3\n§7> Smart tools mod
 function modTick(){
 	timer++;
 
-	//back to last death infos
+	//back to last death cords
 	if(Entity.getHealth(getPlayerEnt())<=0) {
+if(dpos[3]>0)
+dpos[3]--;
+else{
 		dead=1;
-		dpos=[Player.getX(),Player.getY()+2,Player.getZ()];
+		dpos=[Player.getX(),Player.getY()+2,Player.getZ(),20];
 		ModPE.setGameSpeed(20);
+}
 	}
 	
 	//time updating
@@ -1267,13 +1518,23 @@ function modTick(){
 	time.string=new String("Day #"+time.day+" - "+time.hour+":"+time.minutes+" "+time.seconds+"\" "+time.suffix);
 	time.string2=new String("Day #"+time.day+" - "+time.hour+":"+time.minutes+" "+time.suffix);
 
+var nota="";
+if(show[0]>0){
+nota="§o  §f\n"+show[1];
+time.string2=time.string2+nota;
+show[0]--;
+}
 	if(sdisp2)
 		ModPE.showTipMessage("   §7"+time.string2);
 
-	if(sdisp&&timer>=21) {
+	else if(sdisp&&timer>=21) {
 		var disptimer=timer-20;
-		ModPE.showTipMessage("    §7"+parseInt(disptimer/1200)+"' "+ (parseInt(disptimer/20)- (parseInt(disptimer/1200)*60)) +"''");
+		ModPE.showTipMessage("    §7"+parseInt(disptimer/1200)+"' "+ (parseInt(disptimer/20)- (parseInt(disptimer/1200)*60)) +"''"+nota);
 	}
+else if(show[0]>0){
+		show[0]--;
+		ModPE.showTipMessage("§o  "+show[1]);
+}
 
 if(loop>0)
 loop--;
@@ -1303,13 +1564,8 @@ Level.getTime()]]);
 if(past_data.length>199)
 past_data.pop();
 	
-	
-	if(show[0]>0){
-		show[0]--;
-		ModPE.showTipMessage("§o  "+show[1]);
-	}
 	if(debug>0)
-		debug--
+		debug--;
 }
 
 
@@ -1349,7 +1605,7 @@ function createSortedInventory() {
 			inventory.push([Player.getInventorySlot(i),Player.getInventorySlotData(i),Player.getInventorySlotCount(i)]);
 			log.write("Couldn't recognize id: "+Player.getInventorySlot(i)+" (inventory)");
 Player.clearInventorySlot(i);
-if(rmq==0) {
+if(rmq==0&&settings.debug_mode) {
 				clientMessage("§l§8[Inventory Tweaks] §r§oI found items I didn't know where to sort, so I put them in the end.");
 				rmq++
 			}
@@ -1365,7 +1621,7 @@ if(rmq==0) {
 			}
 			else {
 				drop(inventory[i][0],inventory[i][2],inventory[i][1]);
-				if(rmq<2) {
+				if(rmq<2&&settings.debug_mode) {
 					clientMessage("§l§8[Inventory Tweaks] §r§oThere happened to be too many items for your inventory, so I dropped them aside.");
 					rmq=2;
 				}
@@ -1408,7 +1664,7 @@ function createSortedChest(x,y,z,le) {
 			chest.push([Level.getChestSlot(x,y,z,i),Level.getChestSlotData(x,y,z,i),Level.getChestSlotCount(x,y,z,i)]);
 			log.write("Couldn't recognize id: "+Level.getChestSlot(x,y,z,i)+" (chest)");
 Level.setChestSlot(x,y,z,i,0,0,0);
-			if(rmq==0) {
+			if(rmq==0&&settings.debug_mode) {
 				clientMessage("§l§8[Inventory Tweaks] §r§oI found items I didn't know where to sort, so I put them in the end.");
 				rmq++
 			}
@@ -1424,7 +1680,7 @@ Level.setChestSlot(x,y,z,i,0,0,0);
 			}
 			else {
 				drop(chest[i][0],chest[i][2],chest[i][1]);
-				if(rmq<2) {
+				if(rmq<2&&settings.debug_mode) {
 					clientMessage("§l§8[Inventory Tweaks] §r§oThere happened to be too many items for this chest, so I dropped them aside.");
 					rmq=2;
 				}
