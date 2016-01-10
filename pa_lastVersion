@@ -1,10 +1,10 @@
-/*####### release 1.1, build 010  #######
+/*####### release 1.2, build 011  #######
 ############## MOMENTUM ##############
 ############# by Sin0psysS ############
 #######################################*/
 
 
-var version = 10,rversion=1.1;
+var version = 11,rversion=1.2;
 
 var ctx = com.mojang.minecraftpe.MainActivity.currentMainActivity.get(),
 activeNetwork = ctx.getSystemService(ctx.CONNECTIVITY_SERVICE).getActiveNetworkInfo(),
@@ -135,7 +135,7 @@ var log = {
 };
 
 //others
-var sb,dp,dead = 0,timer = 0,loop = 20,sdisp = false,sdisp2 = false,dpos=[null,null,null,0],past_data = [];
+var sb,dp,dead = 0,timer = 0,loop = 20,sdisp = false,sdisp2 = false,dpos=[null,null,null,0],past_data = [],is1,is2,is3,is4;
 
 //Sound file
 var play=new android.media.MediaPlayer();
@@ -181,9 +181,11 @@ var bitmaps = {
 	close_btn_p:graphics.scaledBitmapFromB64(B64.close_btn_p,36,36),
 	ic:graphics.scaledBitmapFromItemOpaque(13,4),
 	ic2:graphics.scaledBitmapFromItemOpaque(3,9),
+ic3:graphics.scaledBitmapFromItemOpaque(9,7),
 	settings_icon:android.graphics.Bitmap.createScaledBitmap(android.graphics.Bitmap.createBitmap(android.graphics.BitmapFactory.decodeStream(ModPE.openInputStreamFromTexturePack("images/gui/touchgui.png")),219,0,20,20),32*dp||32*dp,32*dp||32*dp,false),
 	nether_star:graphics.animatedDrawableFromB64Array(B64.frames,32,32,80)
 };
+
 
 //resizing drawables
 function resize() {
@@ -207,6 +209,7 @@ bitmaps = {
 	close_btn_p:graphics.scaledBitmapFromB64(B64.close_btn_p,36,36),
 	ic:graphics.scaledBitmapFromItemOpaque(13,4),
 	ic2:graphics.scaledBitmapFromItemOpaque(3,9),
+ic3:graphics.scaledBitmapFromItemOpaque(9,7),
 	settings_icon:android.graphics.Bitmap.createScaledBitmap(android.graphics.Bitmap.createBitmap(android.graphics.BitmapFactory.decodeStream(ModPE.openInputStreamFromTexturePack("images/gui/touchgui.png")),219,0,20,20),32*dp||32*dp,32*dp||32*dp,false),
 	nether_star:graphics.animatedDrawableFromB64Array(B64.frames,32,32,80)
 }
@@ -552,21 +555,6 @@ var auToggle = mcToggle("Use mobile network to update",!settings.wifi_only);
 							settings.wifi_only=false;
 					});
 					contentLayout.addView(auToggle);
-					
-					var isToggle = mcToggle("Use common inventory saves for all worlds",settings.common_saves);
-					isToggle.setOnClickListener(function(viewarg) {
-						if(settings.common_saves) {
-							leaveGame();
-							settings.common_saves = false;
-							newLevel();
-						}
-						else {
-							leaveGame();
-							settings.common_saves = true;
-							newLevel();
-						}
-					});
-					contentLayout.addView(isToggle);
 
 					GUI.settings.id = Tool.New.popupWindow(layout, ((displayWidth*3)/8)*dp, ((displayHeight*3)/4)*dp, ctx.getWindow().getDecorView(), android.view.Gravity.CENTER, android.view.Gravity.CENTER, 0, 0);
 					layout.setBackgroundDrawable(bitmaps.bg_settings);
@@ -574,7 +562,7 @@ var auToggle = mcToggle("Use mobile network to update",!settings.wifi_only);
 					
 					GUI.settings.id.setOnDismissListener(function() {
 						GUI.settings.id = null;
-						showMainMenu();
+ModPE.setGameSpeed(20);
 					});
 				}
 				catch(e) {
@@ -766,6 +754,7 @@ tab2.setColorFilter(android.graphics.Color.rgb(123,123,123),android.graphics.Por
 
 					
 					//inventory Tweaks content
+
 					var txt_1 = mcText("§lInstant Sorting\n");
 					contentLayout.addView(txt_1);
 	
@@ -807,8 +796,24 @@ tab2.setColorFilter(android.graphics.Color.rgb(123,123,123),android.graphics.Por
 					});
 					contentLayout.addView(btn);
 
-var subtitle = mcText("\n§lInventory Saves\n");
+var subtitle = mcText("\n\n§lInventory Saves\n");
 					contentLayout.addView(subtitle);
+
+var isToggle = mcToggle("Common saves",settings.common_saves);
+					isToggle.setOnClickListener(function(viewarg) {
+						if(settings.common_saves) {
+							leaveGame();
+							settings.common_saves = false;
+							newLevel();
+						}
+						else {
+							leaveGame();
+							settings.common_saves = true;
+							newLevel();
+						}
+setFilters();
+					});
+					contentLayout.addView(isToggle);
 
 var clr=mcButton("Clear Inventory");
 clr.setOnClickListener(new android.view.View.OnClickListener() {
@@ -821,10 +826,41 @@ Player.clearInventorySlot(i);
 					});
 contentLayout.addView(clr);
 
-var bname="Inventory Save #1";
-if(inventory_saves[0].length==1)
-bname="Long click to save your inventory!";
-var is1=mcButton(bname);
+var inf=mcText("§7Long press to create/delete a save",10);
+inf.setGravity(android.view.Gravity.CENTER);
+contentLayout.addView(inf);
+
+var matrix = new android.graphics.ColorMatrix();
+matrix.setSaturation(0);
+var filter = new android.graphics.ColorMatrixColorFilter(matrix);
+
+var inter=(1/7)*(((displayWidth/2+40)*dp*7)/8-(displayWidth/2)*(dp/7)-(20*dp));
+var l0 = new android.widget.LinearLayout(ctx);
+l0.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+contentLayout.addView(l0);
+is1 = new android.widget.ImageView(ctx);
+is1.setImageBitmap(bitmaps.ic3);
+params=new android.widget.LinearLayout.LayoutParams(inter,inter);
+params.setMargins(0,10*dp,inter,0);
+is1.setLayoutParams(params);
+l0.addView(is1);
+is2 = new android.widget.ImageView(ctx);
+is2.setImageBitmap(bitmaps.ic3);
+is2.setLayoutParams(params);
+l0.addView(is2);
+is3 = new android.widget.ImageView(ctx);
+is3.setImageBitmap(bitmaps.ic3);
+is3.setLayoutParams(params);
+l0.addView(is3);
+is4 = new android.widget.ImageView(ctx);
+is4.setImageBitmap(bitmaps.ic3);
+params=new android.widget.LinearLayout.LayoutParams(inter,inter);
+params.setMargins(0,10*dp,0,0);
+is4.setLayoutParams(params);
+l0.addView(is4);
+
+setFilters();
+
 is1.setOnClickListener(new android.view.View.OnClickListener() {
 						onClick: function(viewarg) {
 playSound("/click.m4a");
@@ -845,19 +881,22 @@ show=[80,"This inventory save is empty!"];
 					});
 is1.setOnLongClickListener(function(v,t) {
 					ctx.getSystemService(android.content.Context.VIBRATOR_SERVICE).vibrate(37);
-					inventory_saves[0]=[];
+					if(inventory_saves[0].length==1) {
+inventory_saves[0]=[];
 for(var i=9;i<=44;i++){
 inventory_saves[0].push([Player.getInventorySlot(i),Player.getInventorySlotCount(i),Player.getInventorySlotData(i)]);
 }
-Tool.setMcText(is1,"Inventory Save #1");
+is1.setColorFilter(null);
+}
+else{
+inventory_saves[0]=[null];
+is1.setColorFilter(filter);
+}
+//Tool.setMcText(is1,"Inventory Save #1");
 return true;
 				});
-contentLayout.addView(is1);
+//contentLayout.addView(is1);
 
-bname="Inventory Save #2";
-if(inventory_saves[1].length==1)
-bname="Long click to save your inventory!";
-var is2=mcButton(bname);
 is2.setOnClickListener(new android.view.View.OnClickListener() {
 						onClick: function(viewarg) {
 playSound("/click.m4a");
@@ -878,19 +917,21 @@ show=[80,"This inventory save is empty!"];
 					});
 is2.setOnLongClickListener(function(v,t) {
 					ctx.getSystemService(android.content.Context.VIBRATOR_SERVICE).vibrate(37);
-					inventory_saves[1]=[];
+					if(inventory_saves[1].length==1) {
+inventory_saves[1]=[];
 for(var i=9;i<=44;i++){
 inventory_saves[1].push([Player.getInventorySlot(i),Player.getInventorySlotCount(i),Player.getInventorySlotData(i)]);
 }
-Tool.setMcText(is2,"Inventory Save #2");
+is2.setColorFilter(null);
+}
+else{
+inventory_saves[1]=[null];
+is2.setColorFilter(filter);
+}
 return true;
 				});
-contentLayout.addView(is2);
+//contentLayout.addView(is2);
 
-bname="Inventory Save #3";
-if(inventory_saves[2].length==1)
-bname="Long click to save your inventory!";
-var is3=mcButton(bname);
 is3.setOnClickListener(new android.view.View.OnClickListener() {
 						onClick: function(viewarg) {
 playSound("/click.m4a");
@@ -911,19 +952,21 @@ show=[80,"This inventory save is empty!"];
 					});
 is3.setOnLongClickListener(function(v,t) {
 					ctx.getSystemService(android.content.Context.VIBRATOR_SERVICE).vibrate(37);
-					inventory_saves[2]=[];
+					if(inventory_saves[2].length==1) {
+inventory_saves[2]=[];
 for(var i=9;i<=44;i++){
 inventory_saves[2].push([Player.getInventorySlot(i),Player.getInventorySlotCount(i),Player.getInventorySlotData(i)]);
 }
-Tool.setMcText(is3,"Inventory Save #3");
+is3.setColorFilter(null);
+}
+else{
+inventory_saves[2]=[null];
+is3.setColorFilter(filter);
+}
 return true;
 				});
-contentLayout.addView(is3);
+//contentLayout.addView(is3);
 
-bname="Inventory Save #4";
-if(inventory_saves[3].length==1)
-bname="Long click to save your inventory!";
-var is4=mcButton(bname);
 is4.setOnClickListener(new android.view.View.OnClickListener() {
 						onClick: function(viewarg) {
 playSound("/click.m4a");
@@ -944,14 +987,20 @@ show=[80,"This inventory save is empty!"];
 					});
 is4.setOnLongClickListener(function(v,t) {
 					ctx.getSystemService(android.content.Context.VIBRATOR_SERVICE).vibrate(37);
-					inventory_saves[3]=[];
+					if(inventory_saves[3].length==1) {
+inventory_saves[3]=[];
 for(var i=9;i<=44;i++){
 inventory_saves[3].push([Player.getInventorySlot(i),Player.getInventorySlotCount(i),Player.getInventorySlotData(i)]);
 }
-Tool.setMcText(is4,"Inventory Save #4");
+is4.setColorFilter(null);
+}
+else{
+inventory_saves[3]=[null];
+is4.setColorFilter(filter);
+}
 return true;
 				});
-contentLayout.addView(is4);
+//contentLayout.addView(is4);
 
 
 					var txt_2=mcText("\n\n§eSettings\n\n",17);
@@ -1165,7 +1214,7 @@ toggle1.setTextSize(parseInt(14*GUI.size));
 					}));
 					contentLayout2.addView(toggle1);
 					//End of TC content
-
+//(1/4)*(((displayWidth/2+40)*dp*7)/8-(displayWidth/2)*(dp/7)+(10*dp))
 					//PopupWindow settings
 					GUI.main.id = new android.widget.PopupWindow(upperLayout, ((displayWidth/2+40)*dp*7)/8, ((displayHeight*dp*7)/8)-(5*dp));
 					GUI.main.id.showAtLocation(ctx.getWindow().getDecorView(), android.view.Gravity.CENTER | android.view.Gravity.CENTER, 0, 0);
@@ -1190,6 +1239,28 @@ upperLayout.setBackgroundDrawable(bitmaps.bg_tab_1);
 			}
 		});
 	}
+}
+
+function setFilters() {
+var matrix = new android.graphics.ColorMatrix();
+matrix.setSaturation(0);
+var filter = new android.graphics.ColorMatrixColorFilter(matrix);
+if(inventory_saves[0].length==1)
+is1.setColorFilter(filter);
+else
+is1.setColorFilter(null);
+if(inventory_saves[1].length==1)
+is2.setColorFilter(filter);
+else
+is2.setColorFilter(null);
+if(inventory_saves[2].length==1)
+is3.setColorFilter(filter);
+else
+is3.setColorFilter(null);
+if(inventory_saves[3].length==1)
+is4.setColorFilter(filter);
+else
+is4.setColorFilter(null);
 }
 
 function showIcon() {
